@@ -1,0 +1,49 @@
+.MmissedCallContainer {
+  width: 83%;
+  margin-left: 17%;
+  min-height: 100vh;
+  background: #e7f2ee;
+}
+
+.missedHeader {
+  width: 85%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.missedHeader h3 {
+  color: #282828;
+  font-size: 24px;
+  font-weight: 600;
+}
+.missedFilter {
+  width: 40%;
+  display: flex;
+  justify-content: space-between;
+  margin-left: 90px;
+}
+.missedCallThirdSection {
+  width: 85%;
+  margin-left: 90px;
+}
+
+.MissedCallContainer {
+  background: #fafcfb;
+  box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
+  border-radius: 16px;
+}
+.MissedCallHeader {
+  background: #e74f4f;
+  box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
+  border-radius: 16px;
+  padding: 12px;
+  color: #fefefe;
+}
+.MissedCallHeader h3 {
+  font-weight: 600;
+}
+.CallDate {
+  padding: 20px;
+}

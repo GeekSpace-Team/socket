@@ -1,0 +1,53 @@
+.courierCard {
+  width: 83%;
+  margin-left: 17%;
+  min-height: 100vh;
+  background: #e7f2ee;
+}
+.courierHeader {
+  width: 85%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.courierHeader h3 {
+  color: #282828;
+  font-size: 24px;
+  font-weight: 600;
+}
+.addCourier {
+  width: 87.5%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.courierFilter {
+  width: 44%;
+  display: flex;
+  justify-content: space-between;
+}
+.AddCourierButton {
+  display: flex;
+  justify-content: flex-end;
+}
+.CCcontainer {
+  width: 87.5%;
+  margin-left: 90px;
+  background: #fafcfb;
+  box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
+  border-radius: 16px;
+  padding: 50px;
+}
+.courierCardTableContainer {
+  width: 86%;
+  margin-left: 115px;
+  margin-top: 10px;
+}
+.courierCard label {
+  font-weight: 400;
+  color: #585858;
+}

@@ -1,0 +1,10 @@
+.acceptButton {
+  background: #5e9cce;
+  border-radius: 32px;
+  text-transform: none;
+  margin-right: 50px;
+}
+.outlinedButton {
+  border-radius: 16px;
+  text-transform: none;
+}

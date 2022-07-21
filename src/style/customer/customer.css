@@ -1,0 +1,151 @@
+.customerCard {
+  width: 83%;
+  margin-left: 17%;
+  min-height: 100vh;
+  background: #e7f2ee;
+}
+.customerHeader {
+  width: 85%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.customerHeader h3 {
+  color: #282828;
+  font-size: 24px;
+  font-weight: 600;
+}
+.addCustomer {
+  width: 87.5%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.customerFilter {
+  width: 44%;
+  display: flex;
+  justify-content: space-between;
+}
+.AddCustomerButton {
+  display: flex;
+  justify-content: flex-end;
+}
+.customerCardContainer {
+  width: 85%;
+  margin-left: 90px;
+  background: #fafcfb;
+  box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
+  border-radius: 16px;
+  padding: 0 20px 0 20px;
+}
+.customerCardContainerHeader {
+  display: flex;
+  height: 50px;
+  color: #282828;
+  font-weight: 600;
+  font-size: 16px;
+  justify-content: space-between;
+  align-items: center;
+}
+.CCCHtitle {
+  width: 100%;
+  display: flex;
+}
+
+.CCCHtitle label {
+  display: flex;
+  justify-content: flex-start;
+  width: 33%;
+}
+.CCTfirstRow {
+  display: flex;
+  background: #f0eefc;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px 8px 0px 0px;
+  padding-left: 10px;
+}
+.CCTfirstRow label {
+  display: flex;
+  justify-content: flex-start;
+  width: 31%;
+}
+.customerCardTable {
+  color: #282828;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 2;
+  padding-bottom: 30px;
+}
+.CCTsecondRow {
+  display: flex;
+  border: 1px solid #e2e2e2;
+  border-radius: 0px 0px 8px 8px;
+  padding-left: 10px;
+}
+.CCTsecondRow label {
+  display: flex;
+  justify-content: flex-start;
+  width: 31%;
+}
+
+/* modal section style */
+.CCMtitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-grow: 1;
+}
+.MGbutton {
+  position: absolute;
+  z-index: 1;
+  top: 27px;
+  right: 21px;
+}
+.CCMtitle label {
+  color: #282828;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.CAname input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 60%;
+}
+
+.aboutGoods {
+  border: 1px dashed #b1b1b1;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 12px;
+}
+.aboutGoods input {
+  background: #f0eefc;
+  border: 1px solid #5e9cce;
+  padding: 8px 16px;
+  border-radius: 16px;
+  outline: none;
+}
+
+.AGHG {
+  position: absolute;
+  top: 495px;
+  right: 35px;
+  margin: 0;
+  z-index: 1;
+}
+
+.ACMbuttons {
+  width: 100%;
+  margin-top: 30px;
+  display: flex;
+  gap: 30px;
+  justify-content: flex-end;
+  padding-bottom: 30px;
+}

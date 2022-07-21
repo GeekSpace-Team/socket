@@ -1,0 +1,119 @@
+.orderCard {
+  width: 83%;
+  margin-left: 17%;
+  min-height: 100vh;
+  background: #e7f2ee;
+}
+.orderHeader {
+  width: 85%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.orderHeader h3 {
+  color: #282828;
+  font-size: 24px;
+  font-weight: 600;
+}
+.addOrder {
+  width: 87.5%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.orderFilter {
+  width: 44%;
+  display: flex;
+  justify-content: space-between;
+}
+.AddOrderButton {
+  display: flex;
+  justify-content: flex-end;
+}
+/* order Card conotainer style section starts here */
+.orderCardContainer {
+  background: #fafcfb;
+  box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
+  border-radius: 16px;
+  width: 87.5%;
+  margin-left: 90px;
+  padding: 20px;
+  margin-top: 20px;
+  color: #282828;
+}
+.OCCheader {
+  display: flex;
+  justify-content: space-between;
+}
+.OCFTfirstRow {
+  display: flex;
+  background: #ecf9fc;
+  border: 1px solid #e2e2e2;
+  border-radius: 16px 16px 0px 0px;
+  padding: 12px;
+  gap: 20px;
+}
+.OCFTsecondRow {
+  display: flex;
+  border: 1px solid #e2e2e2;
+  padding: 12px;
+  gap: 20px;
+}
+.OCFTthirdRow {
+  display: flex;
+  background: #ecf9fc;
+  border: 1px solid #e2e2e2;
+  border-radius: 0px 0px 16px 16px;
+  padding: 12px;
+  gap: 20px;
+}
+.OCCbottomFilters {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+/* order Card container style section ends here */
+
+/* Add order Modal styles starts here */
+.SGMtitle {
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+}
+.AOharytBarada {
+  border: 1px dashed #b1b1b1;
+  border-radius: 8px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 12px;
+}
+.AOharytBarada input {
+  background: #f0eefc;
+  border: 1px solid #5e9cce;
+  border-radius: 16px;
+  padding: 8px 16px;
+  outline: none;
+  color: #282828;
+  font-weight: 400;
+}
+.eltipBermeli {
+  padding: 12px;
+}
+.eltipBermeli input {
+  background: #f0eefc;
+  border: 1px solid #5e9cce;
+  border-radius: 16px;
+  padding: 8px 16px;
+  outline: none;
+  color: #282828;
+  font-weight: 400;
+}
+.eltipBermeli label {
+  color: #585858;
+  font-weight: 400;
+}
+/* Add order Modal styles ends here */

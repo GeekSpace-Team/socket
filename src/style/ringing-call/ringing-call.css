@@ -1,0 +1,48 @@
+.RingingCallContainer {
+  width: 83%;
+  margin-left: 17%;
+  min-height: 100vh;
+  background: #e7f2ee;
+}
+.ringingHeader {
+  width: 85%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ringingHeader h3 {
+  color: #282828;
+  font-size: 24px;
+  font-weight: 600;
+}
+.ringingFilter {
+  width: 40%;
+  display: flex;
+  justify-content: space-between;
+  margin-left: 90px;
+}
+.ringingCallThirdSection {
+  width: 85%;
+  margin-left: 90px;
+}
+
+.missedCallContainer {
+  background: #fafcfb;
+  box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
+  border-radius: 16px;
+}
+.missedCallHeader {
+  background: #afafaf;
+  box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
+  border-radius: 16px;
+  padding: 12px;
+  color: #fefefe;
+}
+.missedCallHeader h3 {
+  font-weight: 600;
+}
+.callDate {
+  padding: 20px;
+}

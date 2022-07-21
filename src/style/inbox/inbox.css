@@ -1,0 +1,48 @@
+.inboxCardContainer {
+  width: 85%;
+  margin-left: 90px;
+  height: 160px;
+  background: #fafcfb;
+  border-radius: 32px;
+  /* margin-right: 50px;
+  margin-left: 50px; */
+  border-left-color: #5e9cce; /* Цвет линии слева */
+  border-left-style: solid; /* Стиль линии */
+  border-left-width: 30px; /* Толщина линии */
+  padding-left: 10px;
+  margin-top: 50px;
+  cursor: pointer;
+}
+
+.inboxCard {
+  width: 83%;
+  margin-left: 17%;
+  min-height: 100vh;
+  background: #e7f2ee;
+}
+.inboxHeader {
+  width: 85%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.inboxHeader h3 {
+  color: #282828;
+  font-size: 24px;
+  font-weight: 600;
+}
+.addInbox {
+  width: 87.5%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.inboxFilter {
+  width: 44%;
+  display: flex;
+  justify-content: space-between;
+}

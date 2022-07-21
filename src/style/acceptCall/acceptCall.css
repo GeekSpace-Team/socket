@@ -1,0 +1,92 @@
+.acceptCardContainer {
+  width: 83%;
+  margin-left: 17%;
+  min-height: 100vh;
+  background: #e7f2ee;
+}
+.acceptCardTitle {
+  width: 85%;
+  margin-left: 90px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.acceptCardTitle h3 {
+  color: #282828;
+  font-size: 24px;
+  font-weight: 600;
+}
+.acceptCard {
+  width: 85%;
+  margin-left: 90px;
+  background: #fafcfb;
+  box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
+  border-radius: 16px;
+}
+
+.acceptCardHeader {
+  background: #6dba75;
+  box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
+  border-radius: 16px;
+  padding: 15px;
+  color: #fefefe;
+}
+.acceptCardHeaderRow {
+  display: flex;
+  justify-content: space-between;
+}
+.secondRowCard {
+  text-align: center;
+  margin-top: 20px;
+}
+.secondRowCard label {
+  font-size: 20px;
+  font-weight: 700;
+}
+.acceptCardBody {
+  filter: drop-shadow(0px 0px 10px rgba(129, 129, 129, 0.15));
+  border-radius: 16px;
+  background: #f7f6f4;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px 8px 0px 0px;
+  height: 50px;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin: 20px 50px 0px 50px;
+}
+.acceptRowCardSecond {
+  color: #282828;
+}
+.secondCardRow {
+  border: 1px solid #e2e2e2;
+  border-radius: 0px 0px 8px 8px;
+  margin: 0px 50px 0px 50px;
+  height: 60px;
+}
+.acceptCardBody {
+  display: flex;
+  padding: 10px;
+}
+.acceptCardBody label {
+  display: flex;
+  justify-content: flex-start;
+  width: 33%;
+}
+.secondCardRow {
+  padding: 10px;
+  display: flex;
+}
+.secondCardRow label {
+  display: flex;
+  justify-content: flex-start;
+  width: 33%;
+}
+.acceptCardButton {
+  width: 95%;
+  margin-top: 30px;
+  display: flex;
+  gap: 30px;
+  justify-content: flex-end;
+  padding-bottom: 30px;
+}

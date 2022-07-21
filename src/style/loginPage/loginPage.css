@@ -1,0 +1,48 @@
+.loginPage {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  display: flex;
+  background-color: #e7f2ee;
+  background-image: url(../../../public/svg/LoginBgImg.svg);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
+.loginForm {
+  width: 647px;
+  margin-top: 80px;
+  height: 485px;
+  background: linear-gradient(
+    179.95deg,
+    #5c6c8c 0.05%,
+    rgba(108, 149, 226, 0.354167) 98.16%,
+    rgba(217, 217, 217, 0.354167) 151.95%,
+    rgba(0, 40, 117, 0) 151.97%
+  );
+  border: 1px solid #6970ff;
+  border-radius: 32px;
+  filter: drop-shadow(8px 8px 10px gray);
+}
+.loginIcon {
+  color: #f1f1f1;
+}
+.loginIcon label {
+  font-size: 23px;
+}
+.idForm {
+  padding: 12px;
+  color: #f1f1f1;
+}
+.idForm input {
+  border-radius: 32px;
+  border: 2px solid #f1f1f1;
+  padding: 12px;
+  color: #f1f1f1;
+  background: transparent;
+}
+.idForm input::placeholder {
+  color: #f1f1f1;
+  font-size: 17px;
+}
