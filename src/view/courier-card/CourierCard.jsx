@@ -7,12 +7,7 @@ import {
   Stack,
 } from "@mui/material";
 import React from "react";
-import BasicSelect from "../common-view/BasicSelect";
 import Export from "../common-view/Export";
-import FilterSelect from "../common-view/FilterSelect";
-import PerPageSelect from "../common-view/PerPageSelect";
-import Search from "../common-view/Search";
-import Sync from "../common-view/Sync";
 import ClearIcon from "@mui/icons-material/Clear";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -67,18 +62,10 @@ const CourierCard = () => {
     <div className="courierCard">
       <div className="courierHeader">
         <h3>Eltip berijiler</h3>
-        <Search />
-        <Export />
-        <Sync />
-      </div>
-      <div className="addCourier">
-        <div className="courierFilter">
-          <BasicSelect />
-          <FilterSelect />
-          <PerPageSelect />
-        </div>
-        <div onClick={handleOpen} className="AddCourierButton">
+        <Stack direction="row" justifyContent={"flex-end"} spacing={3}>
+          <Export />
           <Button
+            onClick={handleOpen}
             style={{
               borderRadius: "16px",
               textTransform: "none",
@@ -90,8 +77,9 @@ const CourierCard = () => {
           >
             Eltip beriji gos
           </Button>
-        </div>
+        </Stack>
       </div>
+
       <div className="courierCardTableContainer">
         <Box sx={{ flexGrow: 1 }}>
           <Grid

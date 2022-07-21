@@ -2,15 +2,9 @@ import React from "react";
 import { Stack, IconButton, Button, Pagination } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import Search from "../common-view/Search";
 import "../../style/inbox/inbox.css";
-import Export from "../common-view/Export";
-import Sync from "../common-view/Sync";
-import BasicSelect from "../common-view/BasicSelect";
 import ClearIcon from "@mui/icons-material/Clear";
-import FilterSelect from "../common-view/FilterSelect";
 import Autocomplete from "@mui/material/Autocomplete";
-import PerPageSelect from "../common-view/PerPageSelect";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import TextField from "@mui/material/TextField";
 import Menu from "@mui/material/Menu";
@@ -73,32 +67,22 @@ const InboxCard = () => {
   return (
     <div className="inboxCard">
       <div className="courierHeader">
-        <h3>Eltip berijiler</h3>
-        <Search />
-        <Export />
-        <Sync />
+        <h3>Gelyan mesajlar</h3>
+        <Button
+          onClick={handleOpen}
+          style={{
+            borderRadius: "16px",
+            textTransform: "none",
+            color: "#fefefe",
+            fontWeight: "600",
+            background: "#5E9CCE",
+          }}
+          variant="contained"
+        >
+          Send message
+        </Button>
       </div>
-      <div className="addCourier">
-        <div className="courierFilter">
-          <BasicSelect />
-          <FilterSelect />
-          <PerPageSelect />
-        </div>
-        <div onClick={handleOpen} className="AddCourierButton">
-          <Button
-            style={{
-              borderRadius: "16px",
-              textTransform: "none",
-              color: "#fefefe",
-              fontWeight: "600",
-              background: "#5E9CCE",
-            }}
-            variant="contained"
-          >
-            Send message
-          </Button>
-        </div>
-      </div>
+
       <div className="inboxCardContainer" onClick={handleOpenn}>
         <Stack direction="column" pt={3} pl={2} pr={3} pb={3}>
           <Stack direction="row" justifyContent="space-between">
