@@ -1,53 +1,26 @@
-import {
-  Button,
-  Grid,
-  IconButton,
-  MenuItem,
-  Select,
-  Stack,
-} from "@mui/material";
-import React from "react";
+import { Grid, Stack } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import Export from "../common-view/Export";
-import ClearIcon from "@mui/icons-material/Clear";
 import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import CreateIcon from "@mui/icons-material/Create";
 import "../../style/courier/courier.css";
-
-const style = {
-  position: "absolute",
-  top: "30%",
-  left: "59%",
-  transform: "translate(-50%, -50%)",
-  width: "60%",
-  display: "block",
-  borderRadius: "16px",
-  bgcolor: "#FAFCFB",
-  boxShadow: 24,
-  p: 4,
-};
-
-const style1 = {
-  position: "absolute",
-  top: "30%",
-  left: "59%",
-  transform: "translate(-50%, -50%)",
-  width: "60%",
-  display: "block",
-  borderRadius: "16px",
-  bgcolor: "#FAFCFB",
-  boxShadow: 24,
-  p: 4,
-};
+import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import { showError } from "../Alert/Alert";
+import { ToastContainer } from "react-toastify";
 
 const CourierCard = () => {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const [open1, setOpen1] = React.useState(false);
-  const handleOpen1 = () => setOpen1(true);
-  const handleClose1 = () => setOpen1(false);
+  const [fullname, setFullname] = useState("");
+  const [phone_number, setPhone_number] = useState();
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [status, setStatus] = useState(0);
+  const [created_at, setCreate_at] = useState();
+  const [updated_at, setUpdate_at] = useState();
+  const [user_role, setUser_role] = useState();
+  const [date_of_birthday, setDate_of_birthday] = useState();
+  const [work_start_date, setWork_start_date] = useState();
+  const [sell_point_id, setSell_point_id] = useState();
+  const [unique_id, setUnique_id] = useState();
+  const [list, setList] = useState([]);
 
   const [age, setAge] = React.useState("");
 
@@ -58,41 +31,61 @@ const CourierCard = () => {
   const hoveredstyle = {
     cursor: "initial",
   };
+
+  const getData = async () => {
+    const data = {
+      fullname: fullname,
+      username: username,
+      password: password,
+      phone_number: phone_number,
+      status: status,
+      created_at: created_at,
+      updated_at: updated_at,
+      user_role: user_role,
+      date_of_birthday: date_of_birthday,
+      work_start_date: work_start_date,
+      sell_point_id: sell_point_id,
+      unique_id: unique_id,
+    };
+    await AxiosInstance.get("/operator/get-couriers", data)
+      .then((response) => {
+        if (!response.data.error) {
+          setList(response.data.body);
+        }
+      })
+      .catch((err) => {
+        showError(err + "");
+      });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
   return (
-    <div className="courierCard">
+    <div className="courierCard container">
       <div className="courierHeader">
         <h3>Eltip berijiler</h3>
         <Stack direction="row" justifyContent={"flex-end"} spacing={3}>
           <Export />
-          <Button
-            onClick={handleOpen}
-            style={{
-              borderRadius: "16px",
-              textTransform: "none",
-              color: "#fefefe",
-              fontWeight: "600",
-              background: "#5E9CCE",
-            }}
-            variant="contained"
-          >
-            Eltip beriji gos
-          </Button>
         </Stack>
       </div>
 
-      <div className="courierCardTableContainer">
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid
-            container
-            spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 6, sm: 6, md: 12 }}
-          >
+      <Grid
+        pl={2}
+        container
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 6, sm: 6, md: 12 }}
+        pt={2}
+      >
+        {list.map((item, i) => {
+          return (
             <Grid
               item
               xs={2}
               sm={6}
               md={6}
               p={3}
+              key={`courier_key${i}`}
               style={{
                 background: "#FAFCFB",
                 boxShadow: "0px 0px 10px rgba(129,129,129,0.15)",
@@ -111,16 +104,8 @@ const CourierCard = () => {
                     color: "#282828",
                   }}
                 >
-                  +99363430338
+                  {item.phone_number}
                 </label>
-                <IconButton
-                  onClick={handleOpen1}
-                  style={{ color: "#5E9CCE" }}
-                  tooltip="Description here"
-                  hoveredstyle={hoveredstyle}
-                >
-                  <CreateIcon />
-                </IconButton>
               </Stack>
               <Stack>
                 <label
@@ -130,7 +115,7 @@ const CourierCard = () => {
                     color: "#282828",
                   }}
                 >
-                  Amanov Bagtyyar Bagtyyarov
+                  {item.fullname}
                 </label>
               </Stack>
               <Stack
@@ -138,356 +123,24 @@ const CourierCard = () => {
                 style={{
                   background: "#ECF9FC",
                   border: "1px solid #e2e2e2",
-                  borderRadius: "16px 16px 0px 0px",
+                  borderRadius: "16px",
                 }}
                 p={1}
                 direction="row"
                 spacing={2}
               >
                 <label>Status :</label>
-                <label>Active</label>
-              </Stack>
-
-              <Stack
-                direction="row"
-                p={1}
-                style={{ border: "1px solid #e2e2e2" }}
-                spacing={3}
-              >
-                <label>Sargytlar :</label>
-                <label
-                  style={{
-                    textDecoration: "underline",
-                    color: "#5E9CCE",
-                    textUnderlineOffset: "2px",
-                  }}
-                >
-                  10 gezek
-                </label>
-              </Stack>
-              <Stack
-                direction="row"
-                style={{ background: "#ECF9FC", border: "1px solid #e2e2e2" }}
-                spacing={2}
-                p={1}
-              >
-                <label>Car number :</label>
-                <label>5677</label>
-              </Stack>
-              <Stack
-                direction="row"
-                spacing={2}
-                p={1}
-                style={{
-                  border: "1px solid #e2e2e2",
-                  borderRadius: "0px 0px 16px 16px",
-                }}
-              >
-                <label>Order status :</label>
-                <label>Free / On the way</label>
+                <label>{item.status == 1 ? "Ishjen" : "Ishjen dal"}</label>
               </Stack>
             </Grid>
-          </Grid>
-        </Box>
-      </div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Stack
-            direction="row"
-            justifyContent={"flex-end"}
-            alignItems="center"
-          >
-            <Stack direction="row" justifyContent="center" width="100%">
-              <label
-                style={{
-                  fontWeight: "600",
-                  fontSize: "20px",
-                  color: "#282828",
-                }}
-              >
-                Eltip beriji goshmak
-              </label>
-            </Stack>
-            <IconButton
-              onClick={handleClose}
-              tooltip="Description here"
-              hoveredstyle={hoveredstyle}
-            >
-              <ClearIcon style={{ color: "#B1B1B1", cursor: "pointer" }} />
-            </IconButton>
-          </Stack>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={{ xs: 1, sm: 2, md: 5 }}
-            mt={2}
-          >
-            <Stack direction="column" spacing={1.5} width="100%">
-              <Stack direction={"row"} spacing={1}>
-                <label style={{ fontWeight: "600" }}>Ady :</label>
-                <input
-                  type="text"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                />
-              </Stack>
-              <hr />
-            </Stack>
-            <Stack direction="column" spacing={1.5} width="100%">
-              <Stack direction={"row"} spacing={1}>
-                <label style={{ fontWeight: "600" }}>Telefon belgisi :</label>
-                <input
-                  type="text"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                />
-              </Stack>
-              <hr />
-            </Stack>
-          </Stack>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={{ xs: 1, sm: 2, md: 5 }}
-            mt={2}
-          >
-            <Stack direction="column" spacing={1.5} width="100%">
-              <Stack direction={"row"} spacing={1}>
-                <label>Car number :</label>
-                <input
-                  type="text"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                />
-              </Stack>
-              <hr />
-            </Stack>
-            <Stack direction="column" spacing={1.5} width="100%">
-              <Stack direction={"row"} spacing={1}>
-                <label>Sargytlar :</label>
-                <input
-                  type="text"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                />
-              </Stack>
-              <hr />
-            </Stack>
-          </Stack>
-          <Stack direction="row" spacing={1} mt={2}>
-            <label>Eltip berijinin statusy</label>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              style={{
-                borderRadius: "16px",
-                height: "40px",
-                border: "1px solid #5E9CCE",
-                minWidth: "300px",
-                color: "#282828",
-                background: "#F0EEFC",
-              }}
-              value={age}
-              label="Age"
-              onChange={handleChange}
-            >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-          </Stack>
-          <Stack direction="row" spacing={2} mt={2} justifyContent="flex-end">
-            <Button
-              variant="outlined"
-              style={{
-                borderRadius: "16px",
-                textTransform: "none",
-                fontWeight: "600",
-                color: "#5e9cce",
-              }}
-            >
-              Delete all
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                textTransform: "none",
-                fontWeight: "600",
-                borderRadius: "16px",
-                background: "#5e9cce",
-              }}
-            >
-              Yatda sakla
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
+          );
+        })}
+      </Grid>
 
       {/* update Modal section starts here */}
-      <Modal
-        open={open1}
-        onClose={handleClose1}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style1}>
-          {" "}
-          <Stack
-            direction="row"
-            justifyContent={"flex-end"}
-            alignItems="center"
-          >
-            <Stack direction="row" justifyContent="center" width="100%">
-              <label
-                style={{
-                  fontWeight: "600",
-                  fontSize: "20px",
-                  color: "#282828",
-                }}
-              >
-                Eltip beriji goshmak
-              </label>
-            </Stack>
-            <IconButton
-              onClick={handleClose1}
-              tooltip="Description here"
-              hoveredstyle={hoveredstyle}
-            >
-              <ClearIcon style={{ color: "#B1B1B1", cursor: "pointer" }} />
-            </IconButton>
-          </Stack>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={{ xs: 1, sm: 2, md: 5 }}
-            mt={2}
-          >
-            <Stack direction="column" spacing={1.5} width="100%">
-              <Stack direction={"row"} spacing={1}>
-                <label style={{ fontWeight: "600" }}>Ady :</label>
-                <input
-                  type="text"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                />
-              </Stack>
-              <hr />
-            </Stack>
-            <Stack direction="column" spacing={1.5} width="100%">
-              <Stack direction={"row"} spacing={1}>
-                <label style={{ fontWeight: "600" }}>Telefon belgisi :</label>
-                <input
-                  type="text"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                />
-              </Stack>
-              <hr />
-            </Stack>
-          </Stack>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={{ xs: 1, sm: 2, md: 5 }}
-            mt={2}
-          >
-            <Stack direction="column" spacing={1.5} width="100%">
-              <Stack direction={"row"} spacing={1}>
-                <label>Car number :</label>
-                <input
-                  type="text"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                />
-              </Stack>
-              <hr />
-            </Stack>
-            <Stack direction="column" spacing={1.5} width="100%">
-              <Stack direction={"row"} spacing={1}>
-                <label>Sargytlar :</label>
-                <input
-                  type="text"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                />
-              </Stack>
-              <hr />
-            </Stack>
-          </Stack>
-          <Stack direction="row" spacing={1} mt={2}>
-            <label>Eltip berijinin statusy</label>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              style={{
-                borderRadius: "16px",
-                height: "40px",
-                border: "1px solid #5E9CCE",
-                minWidth: "300px",
-                color: "#282828",
-                background: "#F0EEFC",
-              }}
-              value={age}
-              label="Age"
-              onChange={handleChange}
-            >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-          </Stack>
-          <Stack direction="row" spacing={2} mt={2} justifyContent="flex-end">
-            <Button
-              variant="outlined"
-              style={{
-                borderRadius: "16px",
-                textTransform: "none",
-                fontWeight: "600",
-                color: "#5e9cce",
-              }}
-            >
-              Delete all
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                textTransform: "none",
-                fontWeight: "600",
-                borderRadius: "16px",
-                background: "#5e9cce",
-              }}
-            >
-              Yatda sakla
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
+
       {/* update Modal section ends here */}
+      <ToastContainer />
     </div>
   );
 };

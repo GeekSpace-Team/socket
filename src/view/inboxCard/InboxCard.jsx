@@ -1,268 +1,198 @@
-import React from "react";
-import { Stack, IconButton, Button, Pagination } from "@mui/material";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import "../../style/inbox/inbox.css";
-import ClearIcon from "@mui/icons-material/Clear";
-import Autocomplete from "@mui/material/Autocomplete";
+import React, { useEffect, useState } from "react";
+import { Stack, IconButton, Pagination } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import TextField from "@mui/material/TextField";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-
-const style = {
-  position: "absolute",
-  top: "20%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "60%",
-  bgcolor: "background.paper",
-  //   border: "1px solid red",
-  //   boxShadow: 24,
-  borderRadius: "16px",
-  borderColor: "#5E9CCE",
-  p: 3,
-};
-
-const style1 = {
-  position: "absolute",
-  top: "20%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 150,
-  bgcolor: "background.paper",
-  //   border: "1px solid red",
-  //   boxShadow: 24,
-  borderRadius: "16px",
-  borderColor: "#5E9CCE",
-  p: 2,
-};
+import "../../style/inbox/inbox.css";
+import Send from "./Send";
+import Description from "./Description";
+import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import { showError, showSuccess } from "../Alert/Alert";
+import { ToastContainer } from "react-toastify";
+import Loading from "../../common/Loading";
+import Empty from "../../common/Empty";
 
 const InboxCard = () => {
+  const [page, setPage] = useState(1);
+  const [page_count, setPageCount] = useState(0);
+  const [list, setList] = useState([]);
+  const [perPage, setPerPage] = useState(20);
+  const [isEmptyPage, setEmptyPage] = useState(false);
+  const [inbox_unique_id, setInbox_unique_id] = useState("");
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
   const hoveredstyle = {
     cursor: "initial",
   };
 
-  const defaultProps = {
-    options: top100Films,
-    getOptionLabel: (option) => option.title,
-  };
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const [openn, setOpenn] = React.useState(false);
-  const handleOpenn = () => setOpenn(true);
-  const handleClosee = () => setOpenn(false);
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const opem = Boolean(anchorEl);
-  const handleClick = (event) => {
+  const handleClick = (event, unique_id) => {
+    setInbox_unique_id(unique_id);
     setAnchorEl(event.currentTarget);
   };
   const handleCloze = () => {
     setAnchorEl(null);
   };
 
+  const getData = async () => {
+    await AxiosInstance.get("/operator/get-inbox?page=1")
+      .then((response) => {
+        if (!response.data.error) {
+          setList(response.data.body.inbox);
+          if (page === 1) {
+            setPageCount(response.data.body.page_count);
+          }
+          if (
+            typeof response.data.body.inbox === "undefined" ||
+            response.data.body.inbox.length <= 0
+          ) {
+            setEmptyPage(true);
+          } else {
+            setEmptyPage(false);
+          }
+        } else {
+          if (list.length === 0) {
+            setEmptyPage(true);
+          }
+        }
+      })
+      .catch((err) => {
+        showError(err + "");
+        if (list.length == 0) {
+          setEmptyPage(true);
+        }
+      });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    getData();
+  }, [page]);
+
+  const removeInbox = async () => {
+    const data = {
+      inbox_unique_id: inbox_unique_id,
+    };
+    await AxiosInstance.put("/operator/remove-inbox", data)
+      .then((response) => {
+        handleCloze();
+        getData();
+        showSuccess("Sizin hatynyz ustunlikli pozuldy !!!");
+      })
+      .catch((err) => {
+        showError(err + "");
+      });
+  };
+
+  const markAsRead = async () => {
+    const data = {
+      inbox_unique_id: inbox_unique_id,
+    };
+    await AxiosInstance.put("/operator/mark-as-read", data)
+      .then((response) => {
+        handleCloze();
+        getData();
+      })
+      .catch((err) => {
+        showError(err + "");
+      });
+  };
+
   return (
-    <div className="inboxCard">
+    <div className="inboxCard container">
       <div className="courierHeader">
         <h3>Gelyan mesajlar</h3>
-        <Button
-          onClick={handleOpen}
-          style={{
-            borderRadius: "16px",
-            textTransform: "none",
-            color: "#fefefe",
-            fontWeight: "600",
-            background: "#5E9CCE",
-          }}
-          variant="contained"
-        >
-          Send message
-        </Button>
+        <Send getData={getData} />
       </div>
-
-      <div className="inboxCardContainer" onClick={handleOpenn}>
-        <Stack direction="column" pt={3} pl={2} pr={3} pb={3}>
-          <Stack direction="row" justifyContent="space-between">
-            <label style={{ fontWeight: "600" }}>#123 / Message title</label>
-            <IconButton
-              tooltip="Description here"
-              hoveredstyle={hoveredstyle}
-              style={{ color: "#5E9CCE" }}
-              aria-controls={opem ? "basic-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={opem ? "true" : undefined}
-              onClick={handleClick}
-            >
-              <MoreVertIcon />
-            </IconButton>
-          </Stack>
-          <Stack direction="row" spacing={10}>
-            <label style={{ fontWeight: "600" }}>Amanov Aman / courier</label>
-            <Stack direction="row" spacing={3}>
-              <label>12.12.2022</label>
-              <label>15:00</label>
-            </Stack>
-          </Stack>
-          <Stack mt={3}>
-            <label>Some message description here</label>
-          </Stack>
-        </Stack>
-      </div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Stack
-            direction="row"
-            justifyContent={"flex-end"}
-            alignItems="center"
-          >
-            <Stack direction="row" justifyContent="center" width="100%">
-              <label
-                style={{
-                  fontWeight: "600",
-                  fontSize: "20px",
-                  color: "#282828",
-                }}
+      {(typeof list === "undefined" || list.length <= 0) && !isEmptyPage ? (
+        <Loading />
+      ) : (typeof list === "undefined" || list.length <= 0) && isEmptyPage ? (
+        <Empty />
+      ) : (
+        <>
+          {list.map((item, i) => {
+            return (
+              <div
+                className="inboxCardContainer"
+                style={
+                  item.is_read
+                    ? { borderLeftColor: `#b1b1b1` }
+                    : { borderLeftColor: `#5e9cce` }
+                }
+                key={`inbox_key${i}`}
               >
-                Send message
-              </label>
-            </Stack>
-            <IconButton
-              onClick={handleClose}
-              tooltip="Description here"
-              hoveredstyle={hoveredstyle}
-            >
-              <ClearIcon style={{ color: "#B1B1B1", cursor: "pointer" }} />
-            </IconButton>
-          </Stack>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={{ xs: 1, sm: 2, md: 5 }}
-            mt={2}
-          >
-            <Stack width="50%">
-              <Autocomplete
-                {...defaultProps}
-                id="disable-close-on-select"
-                disableCloseOnSelect
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="disableCloseOnSelect"
-                    variant="standard"
+                <Stack direction="column" pt={3} pl={2} pr={3} pb={3}>
+                  <Stack direction="row" justifyContent="space-between">
+                    <label style={{ fontWeight: "600" }}>{item.title}</label>
+                    <IconButton
+                      tooltip="Description here"
+                      hoveredstyle={hoveredstyle}
+                      style={{ color: "#5E9CCE" }}
+                      aria-controls={opem ? "basic-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={opem ? "true" : undefined}
+                      onClick={(e) => handleClick(e, item.unique_id)}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                  </Stack>
+                  <Stack direction="row" spacing={10}>
+                    <label style={{ fontWeight: "600" }}>
+                      {item.sender_name == null
+                        ? item.sender_courier_name
+                        : item.sender_name}
+                    </label>
+                    <Stack direction="row" spacing={3}>
+                      <label>
+                        {item.created_at.split("T")[0]} /{" "}
+                        {`${item.created_at.split("T")[1].split(":")[0]}:${
+                          item.created_at.split("T")[1].split(":")[1]
+                        }`}
+                      </label>
+                      {/* <label>{item.}</label> */}
+                    </Stack>
+                  </Stack>
+                  <Description
+                    item={item}
+                    markAsRead={markAsRead}
+                    getData={getData}
+                    setInbox_unique_id={setInbox_unique_id}
                   />
-                )}
-              />
-            </Stack>
-            <Stack direction="column" spacing={2} pt={1} width="50%">
-              <Stack
-                direction="row"
-                alignItems={"center"}
-                spacing={2}
-                width="100"
-              >
-                <label>Message title :</label>
-                <input
-                  type="text"
-                  style={{
-                    border: "none",
-                    outline: "none",
-                    background: "transparent",
-                  }}
-                />
-              </Stack>
-              <hr />
-            </Stack>
-          </Stack>
-          <Stack direction="column" mt={2} spacing={1}>
-            <Stack direction="row" spacing={2}>
-              <label>Message description :</label>
-              <input
-                style={{
-                  border: "none",
-                  outline: "none",
-                  background: "transparent",
-                  width: "70%",
-                }}
-                type="text"
-              />
-            </Stack>
-            <hr />
-          </Stack>
-          <Stack mt={2}>
-            <a href="#Link" style={{ color: "#5E9CCE" }}>
-              Link here if exist
-            </a>
-          </Stack>
-          <Stack direction="row" spacing={3} justifyContent="flex-end">
-            <Button
-              variant="outlined"
-              style={{
-                textTransform: "none",
-                fontWeight: "600",
-                borderRadius: "16px",
-                color: "#5E9CCE",
-              }}
-            >
-              Delete all
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                textTransform: "none",
-                fontWeight: "600",
-                borderRadius: "16px",
-                background: "#5E9CCE",
-              }}
-            >
-              Send
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
-      <Modal
-        open={openn}
-        onClose={handleClosee}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style1}></Box>
-      </Modal>
+                </Stack>
+              </div>
+            );
+          })}
 
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={opem}
-        onClose={handleCloze}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-      >
-        <MenuItem onClick={handleCloze}>Delete</MenuItem>
-        <MenuItem onClick={handleCloze}>Mark as read</MenuItem>
-      </Menu>
-      <Stack mt={10} justifyContent="center" direction="row">
-        <Pagination color="primary" count={10} />
-      </Stack>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={opem}
+            onClose={handleCloze}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem onClick={removeInbox}>Delete</MenuItem>
+            <MenuItem onClick={markAsRead}>Mark as read</MenuItem>
+          </Menu>
+          <Stack mt={10} justifyContent="center" direction="row">
+            <Pagination
+              color="primary"
+              count={page_count}
+              page={page}
+              onChange={handleChange}
+            />
+          </Stack>
+        </>
+      )}
+      <ToastContainer />
     </div>
   );
 };
 
 export default InboxCard;
-
-const top100Films = [
-  { label: "The Shawshank Redemption", year: 1994 },
-  { label: "The Godfather", year: 1972 },
-  { label: "The Godfather: Part II", year: 1974 },
-  { label: "The Dark Knight", year: 2008 },
-  { label: "12 Angry Men", year: 1957 },
-  { label: "Schindler's List", year: 1993 },
-  { label: "Pulp Fiction", year: 1994 },
-];

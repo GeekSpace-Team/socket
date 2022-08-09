@@ -21,7 +21,7 @@ const style = {
   p: 4,
 };
 
-const CallInfoModal = (props) => {
+const MissedInfoModal = (props) => {
   const hoveredstyle = {
     cursor: "initial",
   };
@@ -140,6 +140,7 @@ const CallInfoModal = (props) => {
                 >
                   <label>is yeri :</label>
                   <label>
+                    {" "}
                     {props.item.address_work == null
                       ? "Maglumat girizilmedik"
                       : props.item.address_work}
@@ -207,4 +208,4 @@ const CallInfoModal = (props) => {
   );
 };
 
-export default CallInfoModal;
+export default MissedInfoModal;

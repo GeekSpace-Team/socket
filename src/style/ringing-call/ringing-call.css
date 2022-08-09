@@ -1,13 +1,9 @@
 .RingingCallContainer {
-  width: 83%;
-  margin-left: 17%;
   min-height: 100vh;
   background: #e7f2ee;
 }
 .ringingHeader {
-  width: 85%;
-  margin-left: 90px;
-  height: 100px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,11 +17,6 @@
   width: 40%;
   display: flex;
   justify-content: space-between;
-  margin-left: 90px;
-}
-.ringingCallThirdSection {
-  width: 85%;
-  margin-left: 90px;
 }
 
 .missedCallContainer {

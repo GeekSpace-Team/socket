@@ -1,14 +1,17 @@
 .acceptCardContainer {
-  width: 83%;
-  margin-left: 17%;
+  margin: 0;
+  padding: 0;
+  background-color: #e7f2ee;
   min-height: 100vh;
-  background: #e7f2ee;
+}
+.container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 1% 4% 4% 4%;
 }
 .acceptCardTitle {
-  width: 85%;
-  margin-left: 90px;
-  height: 100px;
   display: flex;
+  height: 70px;
   align-items: center;
   justify-content: space-between;
 }
@@ -18,8 +21,6 @@
   font-weight: 600;
 }
 .acceptCard {
-  width: 85%;
-  margin-left: 90px;
   background: #fafcfb;
   box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
   border-radius: 16px;

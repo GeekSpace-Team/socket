@@ -1,13 +1,12 @@
 .customerCard {
-  width: 83%;
-  margin-left: 17%;
   min-height: 100vh;
   background: #e7f2ee;
 }
+.customerCardContainer {
+  margin-bottom: 30px;
+}
 .customerHeader {
-  width: 85%;
-  margin-left: 90px;
-  height: 100px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -18,9 +17,7 @@
   font-weight: 600;
 }
 .addCustomer {
-  width: 87.5%;
-  margin-left: 90px;
-  height: 100px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -35,8 +32,6 @@
   justify-content: flex-end;
 }
 .customerCardContainer {
-  width: 85%;
-  margin-left: 90px;
   background: #fafcfb;
   box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
   border-radius: 16px;
@@ -116,7 +111,6 @@
   border: none;
   outline: none;
   background: transparent;
-  width: 60%;
 }
 
 .aboutGoods {

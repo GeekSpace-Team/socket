@@ -7,56 +7,66 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-export default function BasicSelect() {
-  const [sort, setAge] = React.useState("");
+const BasicSelect = (props) => {
+  let items = [
+    {
+      value: 0,
+      label: "Tazeden kona",
+    },
+    {
+      value: 1,
+      label: "Koneden taza",
+    },
+    {
+      value: 2,
+      label: "A-dan Z-a",
+    },
+    {
+      value: 3,
+      label: "Z-dan A-a",
+    },
+  ];
+  const [value, setValue] = React.useState(0);
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
+  React.useEffect(() => {
+    props.setSortBy(value);
+  }, [value]);
 
   return (
     <Box>
       <FormControl style={{ width: "130px" }}>
         <InputLabel style={{ marginTop: "-7px" }} id="demo-simple-select-label">
-          Sort
+          {items[value].label}
         </InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={sort}
-          label="Sort"
+          label={items[value].label}
           style={{ borderRadius: "50px", height: "40px", textAlign: "center" }}
-          onChange={handleChange}
+          renderValue={(selected) => selected.join(", ")}
         >
           <RadioGroup
             aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="female"
             name="radio-buttons-group"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
             style={{ padding: "20px" }}
           >
-            <FormControlLabel
-              value="tazeden"
-              control={<Radio />}
-              label="Tazeden kona"
-            />
-            <FormControlLabel
-              value="koneden"
-              control={<Radio />}
-              label="Koneden taza"
-            />
-            <FormControlLabel
-              value="A-dan"
-              control={<Radio />}
-              label="A-dan Z-a"
-            />
-            <FormControlLabel
-              value="Z-dan"
-              control={<Radio />}
-              label="Z-dan A-a"
-            />
+            {items.map((item, i) => {
+              return (
+                <FormControlLabel
+                  value={item.value}
+                  control={<Radio />}
+                  label={item.label}
+                  key={`select__${i}`}
+                />
+              );
+            })}
           </RadioGroup>
         </Select>
       </FormControl>
     </Box>
   );
-}
+};
+
+export default BasicSelect;

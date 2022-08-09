@@ -1,13 +1,9 @@
 .orderCard {
-  width: 83%;
-  margin-left: 17%;
   min-height: 100vh;
   background: #e7f2ee;
 }
 .orderHeader {
-  width: 85%;
-  margin-left: 90px;
-  height: 100px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -18,9 +14,7 @@
   font-weight: 600;
 }
 .addOrder {
-  width: 87.5%;
-  margin-left: 90px;
-  height: 100px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -39,8 +33,6 @@
   background: #fafcfb;
   box-shadow: 0px 0px 10px rgba(129, 129, 129, 0.15);
   border-radius: 16px;
-  width: 87.5%;
-  margin-left: 90px;
   padding: 20px;
   margin-top: 20px;
   color: #282828;

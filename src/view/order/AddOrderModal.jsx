@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, IconButton, Stack } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -6,6 +6,8 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import { showError } from "../Alert/Alert.jsx";
 
 const style = {
   position: "absolute",
@@ -22,7 +24,7 @@ const style = {
   p: 4,
 };
 
-const AddOrderModal = () => {
+const AddOrderModal = (props) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -35,6 +37,22 @@ const AddOrderModal = () => {
   const handleChange = (event) => {
     setAge(event.target.value);
   };
+
+  const addData = async () => {
+    const data = {};
+    await AxiosInstance.post("/operator/add-order", data)
+      .then((response) => {
+        if (!response.data.error) {
+        }
+      })
+      .catch((err) => {
+        showError(err + "");
+      });
+  };
+
+  // useEffect(() => {
+  //   addData();
+  // }, []);
   return (
     <div>
       <Button

@@ -6,7 +6,7 @@ import CustomerUpdate from "../customer/CustomerUpdate";
 
 const AcceptedCallCard = ({ text }) => {
   return (
-    <div className="acceptCardContainer">
+    <div className="acceptCardContainer container">
       <div className="acceptCardTitle">
         <h3>Gelyan janlar</h3>
       </div>
