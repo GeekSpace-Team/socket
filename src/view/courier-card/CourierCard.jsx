@@ -6,6 +6,8 @@ import "../../style/courier/courier.css";
 import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
 import { showError } from "../Alert/Alert";
 import { ToastContainer } from "react-toastify";
+import Empty from "../../common/Empty";
+import Loading from "../../common/Loading";
 
 const CourierCard = () => {
   const [fullname, setFullname] = useState("");
@@ -21,6 +23,7 @@ const CourierCard = () => {
   const [sell_point_id, setSell_point_id] = useState();
   const [unique_id, setUnique_id] = useState();
   const [list, setList] = useState([]);
+  const [isEmptyPage, setEmptyPage] = useState(false);
 
   const [age, setAge] = React.useState("");
 
@@ -51,6 +54,19 @@ const CourierCard = () => {
       .then((response) => {
         if (!response.data.error) {
           setList(response.data.body);
+
+          if (
+            typeof response.data.body.orders === "undefined" ||
+            response.data.body.orders.length <= 0
+          ) {
+            setEmptyPage(true);
+          } else {
+            setEmptyPage(false);
+          }
+        } else {
+          if (list.length === 0) {
+            setEmptyPage(true);
+          }
         }
       })
       .catch((err) => {
@@ -69,77 +85,84 @@ const CourierCard = () => {
           <Export />
         </Stack>
       </div>
-
-      <Grid
-        pl={2}
-        container
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 6, sm: 6, md: 12 }}
-        pt={2}
-      >
-        {list.map((item, i) => {
-          return (
-            <Grid
-              item
-              xs={2}
-              sm={6}
-              md={6}
-              p={3}
-              key={`courier_key${i}`}
-              style={{
-                background: "#FAFCFB",
-                boxShadow: "0px 0px 10px rgba(129,129,129,0.15)",
-                borderRadius: "16px",
-              }}
-            >
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <label
+      {(typeof list === "undefined" || list.length <= 0) && !isEmptyPage ? (
+        <Loading />
+      ) : (typeof list === "undefined" || list.length <= 0) && isEmptyPage ? (
+        <Empty />
+      ) : (
+        <>
+          <Grid
+            pl={2}
+            container
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 6, sm: 6, md: 12 }}
+            pt={2}
+          >
+            {list.map((item, i) => {
+              return (
+                <Grid
+                  item
+                  xs={2}
+                  sm={6}
+                  md={6}
+                  p={3}
+                  key={`courier_key${i}`}
                   style={{
-                    fontWeight: "600",
-                    fontSize: "18px",
-                    color: "#282828",
+                    background: "#FAFCFB",
+                    boxShadow: "0px 0px 10px rgba(129,129,129,0.15)",
+                    borderRadius: "16px",
                   }}
                 >
-                  {item.phone_number}
-                </label>
-              </Stack>
-              <Stack>
-                <label
-                  style={{
-                    fontWeight: "600",
-                    fontSize: "18px",
-                    color: "#282828",
-                  }}
-                >
-                  {item.fullname}
-                </label>
-              </Stack>
-              <Stack
-                mt={2}
-                style={{
-                  background: "#ECF9FC",
-                  border: "1px solid #e2e2e2",
-                  borderRadius: "16px",
-                }}
-                p={1}
-                direction="row"
-                spacing={2}
-              >
-                <label>Status :</label>
-                <label>{item.status == 1 ? "Ishjen" : "Ishjen dal"}</label>
-              </Stack>
-            </Grid>
-          );
-        })}
-      </Grid>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <label
+                      style={{
+                        fontWeight: "600",
+                        fontSize: "18px",
+                        color: "#282828",
+                      }}
+                    >
+                      {item.phone_number}
+                    </label>
+                  </Stack>
+                  <Stack>
+                    <label
+                      style={{
+                        fontWeight: "600",
+                        fontSize: "18px",
+                        color: "#282828",
+                      }}
+                    >
+                      {item.fullname}
+                    </label>
+                  </Stack>
+                  <Stack
+                    mt={2}
+                    style={{
+                      background: "#ECF9FC",
+                      border: "1px solid #e2e2e2",
+                      borderRadius: "16px",
+                    }}
+                    p={1}
+                    direction="row"
+                    spacing={2}
+                  >
+                    <label>Status :</label>
+                    <label>{item.status == 1 ? "Ishjen" : "Ishjen dal"}</label>
+                  </Stack>
+                </Grid>
+              );
+            })}
+          </Grid>
 
-      {/* update Modal section starts here */}
+          {/* update Modal section starts here */}
 
-      {/* update Modal section ends here */}
+          {/* update Modal section ends here */}
+        </>
+      )}
       <ToastContainer />
     </div>
   );

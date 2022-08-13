@@ -51,8 +51,8 @@ const MissedCalls = () => {
             setPageCount(response.data.body.page_count);
           }
           if (
-            typeof response.data.body.inbox === "undefined" ||
-            response.data.body.inbox.length <= 0
+            typeof response.data.body.calls === "undefined" ||
+            response.data.body.calls.length <= 0
           ) {
             setEmptyPage(true);
           } else {

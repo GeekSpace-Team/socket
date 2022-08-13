@@ -144,7 +144,6 @@ const AddCustomerModal = (props) => {
       ...interested_products.slice(index + 1),
     ];
 
-    console.log(newArray);
 
     setInterested_products(newArray);
   };
@@ -158,7 +157,6 @@ const AddCustomerModal = (props) => {
       ...interested_products.slice(index + 1),
     ];
 
-    console.log(newArray);
 
     setInterested_products(newArray);
   };
@@ -172,7 +170,6 @@ const AddCustomerModal = (props) => {
       ...interested_products.slice(index + 1),
     ];
 
-    console.log(newArray);
 
     setInterested_products(newArray);
   };

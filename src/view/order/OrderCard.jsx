@@ -12,6 +12,8 @@ import { showError } from "../Alert/Alert";
 import OrderPerPage from "./OrderPerPage";
 import OrderFilter from "./OrderFilter";
 import "../../style/order/order.css";
+import Empty from "../../common/Empty";
+import Loading from "../../common/Loading";
 
 const OrderCard = () => {
   const [age, setAge] = React.useState("");
@@ -21,7 +23,7 @@ const OrderCard = () => {
   const [sortBy, setSortBy] = useState(0);
   const [page_count, setPageCount] = useState(0);
   const [perPage, setPerPage] = useState(20);
-
+  const [isEmptyPage, setEmptyPage] = useState(false);
   const [list, setList] = useState([]);
 
   const getData = async () => {
@@ -40,6 +42,18 @@ const OrderCard = () => {
 
           if (page === 1) {
             setPageCount(response.data.body.page_count);
+          }
+          if (
+            typeof response.data.body.orders === "undefined" ||
+            response.data.body.orders.length <= 0
+          ) {
+            setEmptyPage(true);
+          } else {
+            setEmptyPage(false);
+          }
+        } else {
+          if (list.length === 0) {
+            setEmptyPage(true);
           }
         }
       })
@@ -119,184 +133,208 @@ const OrderCard = () => {
           <OrderPerPage perPage={perPage} setPerPage={setPerPage} />
         </Stack>
         <div className="AddOrderButton">
-          <AddOrderModal />
+          <AddOrderModal getData={getData} />
         </div>
       </div>
-      {/* Order Card Container Section starts here */}
-      {list.map((item, i) => {
-        return (
-          <div className="orderCardContainer" key={`order_key${i}`}>
-            <div className="OCCheader">
-              <label style={{ fontWeight: "600" }}>
-                {item.phone_number === null ? "" : item.phone_number}
-              </label>
-              <label style={{ fontWeight: "600" }}>
-                {item.fullname === null ? "" : item.fullname}
-              </label>
-              <label>
-                {item.created_at.split("T")[0]} /{" "}
-                {`${item.created_at.split("T")[1].split(":")[0]}:${
-                  item.created_at.split("T")[1].split(":")[1]
-                }`}
-              </label>
-            </div>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 1, sm: 2, md: 12 }}
-              mt={2}
-            >
-              {/* Order Card first table starts here */}
-              <Stack
-                direction="column"
-                width="100%"
-                style={{
-                  filter: "drop-shadow(0px 0px 10px rgba(129,129,129,0.15)",
-                }}
-              >
-                <div className="OCFTfirstRow">
-                  <label>Statusy : </label>
+      {(typeof list === "undefined" || list.length <= 0) && !isEmptyPage ? (
+        <Loading />
+      ) : (typeof list === "undefined" || list.length <= 0) && isEmptyPage ? (
+        <Empty />
+      ) : (
+        <>
+          {/* Order Card Container Section starts here */}
+          {list.map((item, i) => {
+            return (
+              <div className="orderCardContainer" key={`order_key${i}`}>
+                <div className="OCCheader">
+                  <label style={{ fontWeight: "600" }}>
+                    {item.phone_number === null ? "" : item.phone_number}
+                  </label>
+                  <label style={{ fontWeight: "600" }}>
+                    {item.fullname === null ? "" : item.fullname}
+                  </label>
                   <label>
-                  
-                    {translateStatus(
-                      item.status_history[item.status_history.length - 1].status
-                    )}
+                    {item.created_at.split("T")[0]} /{" "}
+                    {`${item.created_at.split("T")[1].split(":")[0]}:${
+                      item.created_at.split("T")[1].split(":")[1]
+                    }`}
                   </label>
                 </div>
-
-                <div className="OCFTsecondRow">
-                  <label>Eltip bermeli yeri : </label>
-                  <label>
-                    {
-                      item.address_history[item.address_history.length - 1]
-                        .address
-                    }
-                  </label>
-                </div>
-                <div className="OCFTthirdRow">
-                  <label>Eltip bermeli wagty : </label>
-                  <label>
-                    {item.date_history[item.date_history.length - 1].order_date}{" "}
-                    /
-                    {item.date_history[item.date_history.length - 1].order_time}
-                  </label>
-                </div>
-              </Stack>
-              {/* Order Card first table ends here */}
-              {/* Order Card second table starts here  */}
-              <Stack
-                direction="column"
-                width="100%"
-                style={{
-                  filter: "drop-shadow(0px 0px 10px rgba(129,129,129,0.15)",
-                }}
-              >
-                <div className="OCFTfirstRow">
-                  <label>Eltip bermek bahasy : </label>
-                  <label>
-                    {
-                      item.delivery_price_history[
-                        item.delivery_price_history.length - 1
-                      ].delivery_price
-                    }{" "}
-                    TMT
-                  </label>
-                </div>
-
-                <div className="OCFTsecondRow">
-                  <label>Jemi bahasy :</label>
-                  <label>1023 TMT</label>
-                </div>
-                <div className="OCFTthirdRow">
-                  <label>Eltip beriji : </label>
-                  <label>Amanov Bagtyyar</label>
-                </div>
-              </Stack>
-              {/* Order Card second table ends here */}
-              {/* Order Card Container section ends here */}
-            </Stack>
-            <div className="OCCbottomFilters">
-              {" "}
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={{ xs: 1, sm: 2, md: 5 }}
-                mt={2}
-              >
-                <Button
-                  style={{
-                    textTransform: "none",
-                    borderRadius: "16px",
-                    color: "#585858",
-                    border: "1px solid #b1b1b1",
-                    height: "40px",
-                  }}
-                  variant="outlined"
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={{ xs: 1, sm: 2, md: 12 }}
+                  mt={2}
                 >
-                  Print fracture
-                </Button>
+                  {/* Order Card first table starts here */}
+                  <Stack
+                    direction="column"
+                    width="100%"
+                    style={{
+                      filter: "drop-shadow(0px 0px 10px rgba(129,129,129,0.15)",
+                    }}
+                  >
+                    <div className="OCFTfirstRow">
+                      <label>Statusy : </label>
+                      <label>
+                        {translateStatus(
+                          item.status_history[item.status_history.length - 1]
+                            .status === null
+                            ? ""
+                            : item.status_history[
+                                item.status_history.length - 1
+                              ].status
+                        )}
+                      </label>
+                    </div>
 
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  style={{
-                    borderRadius: "16px",
-                    height: "40px",
-                    border: "1px solid #b1b1b1",
-                    minWidth: "200px",
-                    color: "#5e9cce",
-                  }}
-                  value={age}
-                  label="Age"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  style={{
-                    borderRadius: "16px",
-                    height: "40px",
-                    border: "1px solid #b1b1b1",
-                    minWidth: "200px",
-                    color: "#5e9cce",
-                  }}
-                  value={age}
-                  label="Age"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-                <Button
-                  variant="contained"
-                  style={{
-                    borderRadius: "16px",
-                    background: "#5e9cce",
-                    color: "#FAFCFB",
-                    textTransform: "none",
-                    fontWeight: "600",
-                    height: "40px",
-                  }}
-                >
-                  Open
-                </Button>
-              </Stack>
-            </div>
-          </div>
-        );
-      })}
+                    <div className="OCFTsecondRow">
+                      <label>Eltip bermeli yeri : </label>
+                      <label>
+                        {item.address_history[item.address_history.length - 1]
+                          .address === null
+                          ? ""
+                          : item.address_history[
+                              item.address_history.length - 1
+                            ].address}
+                      </label>
+                    </div>
+                    <div className="OCFTthirdRow">
+                      <label>Eltip bermeli wagty : </label>
+                      <label>
+                        {item.date_history[item.date_history.length - 1]
+                          .order_date === null
+                          ? ""
+                          : item.date_history[item.date_history.length - 1]
+                              .order_date}
+                        /
+                        {item.date_history[item.date_history.length - 1]
+                          .order_time === null
+                          ? ""
+                          : item.date_history[item.date_history.length - 1]
+                              .order_time}
+                      </label>
+                    </div>
+                  </Stack>
+                  {/* Order Card first table ends here */}
+                  {/* Order Card second table starts here  */}
+                  <Stack
+                    direction="column"
+                    width="100%"
+                    style={{
+                      filter: "drop-shadow(0px 0px 10px rgba(129,129,129,0.15)",
+                    }}
+                  >
+                    <div className="OCFTfirstRow">
+                      <label>Eltip bermek bahasy : </label>
+                      <label>
+                        {item.delivery_price_history[
+                          item.delivery_price_history.length - 1
+                        ].delivery_price === null
+                          ? ""
+                          : item.delivery_price_history[
+                              item.delivery_price_history.length - 1
+                            ].delivery_price}
+                        TMT
+                      </label>
+                    </div>
 
-      <Stack mt={10} justifyContent="center" direction="row">
-        <Pagination
-          color="primary"
-          count={page_count}
-          page={page}
-          onChange={handleChange}
-        />
-      </Stack>
+                    <div className="OCFTsecondRow">
+                      <label>Jemi bahasy :</label>
+                      <label>1023 TMT</label>
+                    </div>
+                    <div className="OCFTthirdRow">
+                      <label>Eltip beriji : </label>
+                      <label>Amanov Bagtyyar</label>
+                    </div>
+                  </Stack>
+                  {/* Order Card second table ends here */}
+                  {/* Order Card Container section ends here */}
+                </Stack>
+                <div className="OCCbottomFilters">
+                  {" "}
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={{ xs: 1, sm: 2, md: 5 }}
+                    mt={2}
+                  >
+                    <Button
+                      style={{
+                        textTransform: "none",
+                        borderRadius: "16px",
+                        color: "#585858",
+                        border: "1px solid #b1b1b1",
+                        height: "40px",
+                      }}
+                      variant="outlined"
+                    >
+                      Print fracture
+                    </Button>
+
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      style={{
+                        borderRadius: "16px",
+                        height: "40px",
+                        border: "1px solid #b1b1b1",
+                        minWidth: "200px",
+                        color: "#5e9cce",
+                      }}
+                      value={age}
+                      label="Age"
+                      onChange={handleChange}
+                    >
+                      <MenuItem value={10}>Ten</MenuItem>
+                      <MenuItem value={20}>Twenty</MenuItem>
+                      <MenuItem value={30}>Thirty</MenuItem>
+                    </Select>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      style={{
+                        borderRadius: "16px",
+                        height: "40px",
+                        border: "1px solid #b1b1b1",
+                        minWidth: "200px",
+                        color: "#5e9cce",
+                      }}
+                      value={age}
+                      label="Age"
+                      onChange={handleChange}
+                    >
+                      <MenuItem value={10}>Ten</MenuItem>
+                      <MenuItem value={20}>Twenty</MenuItem>
+                      <MenuItem value={30}>Thirty</MenuItem>
+                    </Select>
+                    <Button
+                      variant="contained"
+                      style={{
+                        borderRadius: "16px",
+                        background: "#5e9cce",
+                        color: "#FAFCFB",
+                        textTransform: "none",
+                        fontWeight: "600",
+                        height: "40px",
+                      }}
+                    >
+                      Open
+                    </Button>
+                  </Stack>
+                </div>
+              </div>
+            );
+          })}
+
+          <Stack mt={10} justifyContent="center" direction="row">
+            <Pagination
+              color="primary"
+              count={page_count}
+              page={page}
+              onChange={handleChange}
+            />
+          </Stack>
+        </>
+      )}
     </div>
   );
 };

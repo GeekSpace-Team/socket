@@ -214,7 +214,7 @@ const CustomerUpdate = (props) => {
                     onChange={(e) => setFullname(e.target.value)}
                   />
                 </Stack>
-                <hr />{" "}
+                <hr />
               </div>
             </Grid>
             <Grid item lg={6} md={6} xs={12} sm={12} pl={3}>
@@ -227,7 +227,7 @@ const CustomerUpdate = (props) => {
                     type="text"
                   />
                 </Stack>
-                <hr />{" "}
+                <hr />
               </div>
             </Grid>
           </Grid>
@@ -242,7 +242,7 @@ const CustomerUpdate = (props) => {
                     type="text"
                   />
                 </Stack>
-                <hr />{" "}
+                <hr />
               </div>
             </Grid>
           </Grid>
