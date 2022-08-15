@@ -28,7 +28,7 @@ const AddCustomerModal = (props) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [fullname, setFullname] = useState("");
-  const [phone_number, setPhone_number] = useState();
+  const [phone_number, setPhone_number] = useState(typeof props.phone_number!== 'undefined' && props.phone_number != null ? props.phone_number : props.phone_number);
   const [question_mode, setQuestion_mode] = useState("");
   const [address_home, setAddress_home] = useState("");
   const [address_work, setAddress_work] = useState("");

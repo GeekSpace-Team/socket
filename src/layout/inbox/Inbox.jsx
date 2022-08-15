@@ -2,10 +2,10 @@ import React from "react";
 import InboxCard from "../../view/inboxCard/InboxCard";
 import "../../style/inbox/inbox.css";
 
-const Inbox = () => {
+const Inbox = (props) => {
   return (
     <div>
-      <InboxCard />
+      <InboxCard  unreadCount={props.unreadCount} setUnreadCount={props.setUnreadCount}/>
     </div>
   );
 };

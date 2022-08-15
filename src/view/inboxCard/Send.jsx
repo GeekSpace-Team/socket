@@ -35,6 +35,7 @@ const Send = (props) => {
   const [to_unique_id, setUniqe_id] = useState("");
   const [list, setList] = useState([]);
   const [lisst, setLisst] = useState([]);
+  const [value,setValue]=useState();
 
   const hoveredstyle = {
     cursor: "initial",
@@ -73,7 +74,7 @@ const Send = (props) => {
       title: title,
       message: message,
       link_to_goal: link_to_goal,
-      to_unique_id: to_unique_id,
+      to_unique_id: value.unique_id,
     };
     await AxiosInstance.post("/operator/add-inbox", data)
       .then((response) => {
@@ -143,11 +144,14 @@ const Send = (props) => {
             spacing={{ xs: 1, sm: 2, md: 5 }}
             mt={2}
           >
-            {lisst.map((index, i) => {
-              return (
-                <Stack width="50%" key={`inbox_autocomplete${i}`}>
+            <Stack width="50%" key={`inbox_autocomplete`}>
                   <Autocomplete
-                    options={index.fullname}
+                    value={value}
+                    onChange={(event, newValue) => {
+                      setValue(newValue);
+                    }}
+                    options={lisst}
+                    getOptionLabel={(option)=>option.fullname}
                     id="disable-close-on-select"
                     disableCloseOnSelect
                     renderInput={(params) => (
@@ -155,8 +159,6 @@ const Send = (props) => {
                     )}
                   />
                 </Stack>
-              );
-            })}
 
             <Stack direction="column" spacing={2} pt={1} width="50%">
               <Stack

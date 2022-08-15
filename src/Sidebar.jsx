@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Badge,
   CssBaseline,
   Divider,
   Drawer,
@@ -14,6 +15,10 @@ import { Link, Outlet } from "react-router-dom";
 import { sidebarItems } from "./layout/sidebar/Sidebar";
 import PropTypes from "prop-types";
 import { Box } from "@mui/system";
+import MailIcon from '@mui/icons-material/Mail';
+import { useState } from "react";
+import { appSocket } from "./api-interface/socket-io/socket.mjs";
+import { AxiosInstance } from "./api-interface/api/AxiosInstance.mjs";
 
 const drawerWidth = 240;
 
@@ -22,6 +27,23 @@ const Sidebar = (props) => {
   const [selected, setSelected] = React.useState(0);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const setTitle = React.useState(sidebarItems[0].title);
+  
+
+  appSocket.on("onInbox",(arg,callback)=>{
+    if(arg.unique_id==localStorage.getItem('unique_id')){
+      props.setUnreadCount(arg.unread_inbox_count);
+    }
+  })
+
+  AxiosInstance.get('/operator/get-unread-inbox-count')
+  .then(response=>{
+    if(!response.data.error){
+      props.setUnreadCount(response.data.body.unread_inbox_count);
+    }
+  })
+  .catch(err=>{})
+
+
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -60,6 +82,14 @@ const Sidebar = (props) => {
               >
                 <ListItemIcon color="action">{sidebarItem.icon}</ListItemIcon>
                 <ListItemText primary={sidebarItem.title} color="action" />
+                
+                {
+                  sidebarItem.link=='/inbox'?
+                  <Badge badgeContent={props.unreadCount} color="primary">
+                </Badge>
+                :
+                null
+                }
               </ListItemButton>
             </ListItem>
           </Link>

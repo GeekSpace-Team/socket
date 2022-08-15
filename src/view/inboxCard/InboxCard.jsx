@@ -11,8 +11,9 @@ import { showError, showSuccess } from "../Alert/Alert";
 import { ToastContainer } from "react-toastify";
 import Loading from "../../common/Loading";
 import Empty from "../../common/Empty";
+import { appSocket } from "../../api-interface/socket-io/socket.mjs";
 
-const InboxCard = () => {
+const InboxCard = (props) => {
   const [page, setPage] = useState(1);
   const [page_count, setPageCount] = useState(0);
   const [list, setList] = useState([]);
@@ -26,6 +27,16 @@ const InboxCard = () => {
     cursor: "initial",
   };
 
+  const getUnreadCount=()=>{
+    AxiosInstance.get('/operator/get-unread-inbox-count')
+  .then(response=>{
+    if(!response.data.error){
+      props.setUnreadCount(response.data.body.unread_inbox_count);
+    }
+  })
+  .catch(err=>{})
+  }
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const opem = Boolean(anchorEl);
   const handleClick = (event, unique_id) => {
@@ -37,26 +48,29 @@ const InboxCard = () => {
   };
 
   const getData = async () => {
-    await AxiosInstance.get("/operator/get-inbox?page=1")
+    await AxiosInstance.get("/operator/get-inbox?page="+page)
       .then((response) => {
         if (!response.data.error) {
           setList(response.data.body.inbox);
-          if (page === 1) {
+          // if (page == 1) {
             setPageCount(response.data.body.page_count);
-          }
+          // }
           if (
             typeof response.data.body.inbox === "undefined" ||
             response.data.body.inbox.length <= 0
           ) {
+            setPage(page-1);
             setEmptyPage(true);
           } else {
             setEmptyPage(false);
           }
         } else {
           if (list.length === 0) {
+            setPage(page-1);
             setEmptyPage(true);
           }
         }
+        getUnreadCount();
       })
       .catch((err) => {
         showError(err + "");
@@ -68,6 +82,7 @@ const InboxCard = () => {
 
   useEffect(() => {
     getData();
+    getUnreadCount();
   }, []);
 
   useEffect(() => {
@@ -88,6 +103,12 @@ const InboxCard = () => {
         showError(err + "");
       });
   };
+
+  appSocket.on("onInbox",(arg,callback)=>{
+    if(arg.unique_id==localStorage.getItem('unique_id')){
+      setPage(1);
+    }
+  })
 
   const markAsRead = async () => {
     const data = {

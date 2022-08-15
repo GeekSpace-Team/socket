@@ -24,6 +24,7 @@ const LoginPage = () => {
           localStorage.setItem("my_token", response.data.body.token);
           localStorage.setItem("userID", response.data.body.userId);
           localStorage.setItem("user_type", response.data.body.user_type);
+          localStorage.setItem("unique_id", response.data.body.unique_id);
           window.location.href = "/";
         } else {
           showError("Username or password is incorrect!");
