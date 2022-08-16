@@ -14,6 +14,7 @@ import OrderFilter from "./OrderFilter";
 import "../../style/order/order.css";
 import Empty from "../../common/Empty";
 import Loading from "../../common/Loading";
+import Open from "./Open";
 
 const OrderCard = () => {
   const [age, setAge] = React.useState("");
@@ -306,19 +307,7 @@ const OrderCard = () => {
                       <MenuItem value={20}>Twenty</MenuItem>
                       <MenuItem value={30}>Thirty</MenuItem>
                     </Select>
-                    <Button
-                      variant="contained"
-                      style={{
-                        borderRadius: "16px",
-                        background: "#5e9cce",
-                        color: "#FAFCFB",
-                        textTransform: "none",
-                        fontWeight: "600",
-                        height: "40px",
-                      }}
-                    >
-                      Open
-                    </Button>
+                    <Open />
                   </Stack>
                 </div>
               </div>

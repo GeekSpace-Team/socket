@@ -29,6 +29,7 @@ const RinginCallCard = () => {
   const [sortBy, setSortBy] = useState(0);
   const [perPage, setPerPage] = useState(20);
   const [isEmptyPage, setEmptyPage] = useState(false);
+  const [fields, setFileds] = useState([]);
 
   const [list, setList] = useState([]);
 
@@ -107,6 +108,20 @@ const RinginCallCard = () => {
     getData();
   }, [perPage]);
 
+  const getFields = async () => {
+    await AxiosInstance.get("/operator/get-fields")
+      .then((response) => {
+        setFileds(response.data.body);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getFields();
+  }, []);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -178,7 +193,12 @@ const RinginCallCard = () => {
                           </Stack>
                           <Stack direction="row" spacing={7}>
                             <span>{item.phone_number}</span>
-                            <CallInfoModal item={item} />
+                            <CallInfoModal
+                              getData={getData}
+                              fields={fields}
+                              item={item.customer}
+                              key={`customer_update_ringing_$`}
+                            />
                           </Stack>
                         </Stack>
                         <h3>

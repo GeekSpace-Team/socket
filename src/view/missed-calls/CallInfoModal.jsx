@@ -198,7 +198,12 @@ const CallInfoModal = (props) => {
               mt={4}
             >
               <AddOrderModal />
-              <CustomerUpdate which={"accept-call"} />
+              <CustomerUpdate
+                item={props.item.customer[0]}
+                fields={props.fields}
+                getData={props.getData}
+                which={"accept-call"}
+              />
             </Stack>
           </Box>
         </div>
