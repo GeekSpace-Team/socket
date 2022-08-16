@@ -366,16 +366,45 @@ const Open = () => {
                 <input type="number" />
               </Stack>
             </Stack>
-            <Stack direction={"column"} mt={3}>
-              <label style={{ color: "#3570A2", fontWeight: "600" }}>
-                Operator 1 tarapyndan uytgedildi
-              </label>
-              <label style={{ color: "#3570A2", fontWeight: "600" }}>
-                Sebabi : ish yerine dal-de oyune eltip bermeli
-              </label>
-            </Stack>
             <Stack mt={2}>
               <label>Eltip bermeli yeri :</label>
+            </Stack>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={{ xs: 1, sm: 2, md: 4 }}
+              mt={1}
+              className="passiveInput"
+              mb={2}
+            >
+              <Stack width="100%">
+                <Select
+                  id="demo-simple-select"
+                  // value={address}
+                  style={{
+                    background: "#f0eefc",
+                    border: "1px solid #5e9cce",
+                    borderRadius: "16px",
+                    height: "35px",
+                    opacity: "0.3",
+                  }}
+                  // onChange={(e) => setAddress(e.target.value)}
+                >
+                  <MenuItem>Bashga yere</MenuItem>
+                </Select>
+              </Stack>
+              <Stack width="100%">
+                <input type="text" />
+              </Stack>
+              <Stack width="100%">
+                <MapLocation />
+              </Stack>
+            </Stack>
+            <Stack mb={1}>
+              <label
+                style={{ color: "#3570A2", fontWeight: "600", opacity: "0.3" }}
+              >
+                Operator 1 tarapyndan girizildi
+              </label>
             </Stack>
             <Stack direction="column" spacing={1.5}>
               <Stack
@@ -411,13 +440,21 @@ const Open = () => {
                 alignItems={"center"}
               >
                 <label style={{ color: "#3570A2", fontWeight: "600" }}>
-                  Operator 1 tarapyndan girizildi
+                  Operator 1 tarapyndan uytgedildi
                 </label>
 
                 <PlaceChange />
               </Stack>
               <hr />
             </Stack>{" "}
+            <Stack direction={"column"} mt={3}>
+              <label style={{ color: "#3570A2", fontWeight: "600" }}>
+                Operator 1 tarapyndan uytgedildi
+              </label>
+              <label style={{ color: "#3570A2", fontWeight: "600" }}>
+                Sebabi : ish yerine dal-de oyune eltip bermeli
+              </label>
+            </Stack>
             <Stack direction={"column"} spacing={1} mt={2}>
               <Stack
                 direction={"row"}
@@ -432,15 +469,72 @@ const Open = () => {
                   alignItems={"center"}
                   width={"100%"}
                 >
-                  <Stack direction={"column"} width={"31%"}>
+                  <Stack
+                    direction={"column"}
+                    spacing={2}
+                    className="passiveInput"
+                    width={"31%"}
+                  >
                     <label>Eltip bermek sene we wagty:</label>
+
                     <input
                       type="date"
                       // onChange={(e) => setOrder_date(e.target.value)}
                       // value={order_date}
                     />
                   </Stack>
-                  <Stack width={"31%"} pt={2.2} direction={"column"}>
+                  <Stack
+                    className="passiveInput"
+                    width={"31%"}
+                    pt={5}
+                    direction={"column"}
+                  >
+                    <input
+                      type="time"
+                      // onChange={(e) => setOrder_time(e.target.value)}
+                      // value={order_time}
+                      style={{ padding: "6px 16px" }}
+                    />
+                  </Stack>
+                </Stack>
+              </Stack>
+              <Stack
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+              >
+                <label
+                  style={{
+                    color: "#3570A2",
+                    fontWeight: "600",
+                    opacity: "0.3",
+                  }}
+                >
+                  Operator 1 tarapyndan girizildi
+                </label>
+              </Stack>
+
+              <Stack
+                direction={"row"}
+                width={"100%"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+              >
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={{ xs: 1, sm: 2, md: 4 }}
+                  mt={2}
+                  alignItems={"center"}
+                  width={"100%"}
+                >
+                  <Stack direction={"column"} width={"31%"}>
+                    <input
+                      type="date"
+                      // onChange={(e) => setOrder_date(e.target.value)}
+                      // value={order_date}
+                    />
+                  </Stack>
+                  <Stack width={"31%"} direction={"column"}>
                     <input
                       type="time"
                       // onChange={(e) => setOrder_time(e.target.value)}
@@ -456,7 +550,7 @@ const Open = () => {
                 alignItems={"center"}
               >
                 <label style={{ color: "#3570A2", fontWeight: "600" }}>
-                  Operator 1 tarapyndan girizildi
+                  Operator 1 tarapyndan uytgedildi
                 </label>
 
                 <DateAndTime />

@@ -104,6 +104,9 @@
   color: #282828;
   font-weight: 400;
 }
+.passiveInput input {
+  opacity: 0.3;
+}
 .eltipBermeli label {
   color: #585858;
   font-weight: 400;

@@ -45,6 +45,7 @@ const MapLocation = (props) => {
           color: "#282828",
           fontWeight: "600",
           width: "100%",
+          opacity: "0.3",
         }}
         variant="outlined"
       >
