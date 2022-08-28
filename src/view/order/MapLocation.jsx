@@ -1,5 +1,5 @@
 import { Button, Stack } from "@mui/material";
-import React from "react";
+import React, { useRef } from "react";
 import { Map, Marker, GoogleApiWrapper } from "google-maps-react";
 import Dialog from "@mui/material/Dialog";
 import AppBar from "@mui/material/AppBar";
@@ -18,23 +18,29 @@ const MapLocation = (props) => {
 
   const handleClickOpen = () => {
     setOpen(true);
+      setMoveMarker({
+          lat: props.latitude != null && props.latitude != "" ? props.latitude : 37.8965564,
+          lng: props.longitude != null && props.longitude != "" ? props.longitude : 58.3740528,
+      });
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
+
   const [moveMarker, setMoveMarker] = React.useState({
-    lat: 37.8965564,
-    lng: 58.3740528,
+    lat: props.latitude != null && props.latitude != "" ? props.latitude : 37.8965564,
+    lng: props.longitude != null && props.longitude != "" ? props.longitude : 58.3740528,
   });
 
   const mapClicked = (mapProps, map, clickEvent) => {
-    console.log(mapProps);
-    console.log(map);
-    console.log(clickEvent);
     setMoveMarker(clickEvent.latLng);
+    props.setLatitude(clickEvent.latLng.lat);
+    props.setLongitude(clickEvent.latLng.lng);
   };
+
+
   return (
     <div>
       <Button
@@ -45,11 +51,10 @@ const MapLocation = (props) => {
           color: "#282828",
           fontWeight: "600",
           width: "100%",
-          opacity: "0.3",
         }}
         variant="outlined"
       >
-        Kartadan gorkez
+        Kartadan görkez
       </Button>
       <Dialog
         fullScreen
@@ -71,17 +76,21 @@ const MapLocation = (props) => {
             >
               <CloseIcon />
             </IconButton>
-            <Stack direction={"row"} justifyContent={"flex-end"}>
-              <Button autoFocus color="inherit" onClick={handleClose}>
-                save
-              </Button>
-            </Stack>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              Kartadan görkez
+            </Typography>
+            <Button autoFocus color="inherit" onClick={handleClose}>
+              Ýatda saklat
+            </Button>
           </Toolbar>
         </AppBar>
         <Map
           google={props.google}
           zoom={17}
-          initialCenter={moveMarker}
+          initialCenter={{
+            lat: props.latitude != null && props.latitude != "" ? props.latitude : 37.8965564,
+            lng: props.longitude != null && props.longitude != "" ? props.longitude : 58.3740528,
+          }}
           mapType="satellite"
           onClick={mapClicked}
         >

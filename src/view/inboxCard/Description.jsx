@@ -1,9 +1,10 @@
 import { IconButton, Modal, Stack } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Box } from "@mui/system";
-import React, { useEffect } from "react";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import React, {useContext, useEffect} from "react";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import { showError } from "../Alert/Alert.jsx";
+import {AppContext} from "../../App";
 
 const style1 = {
   position: "absolute",
@@ -30,11 +31,13 @@ const Description = (props) => {
   const hoveredstyle = {
     cursor: "initial",
   };
+  const {online}=useContext(AppContext);
   const markAsRead = async (inbox_unique_id) => {
     const data = {
       inbox_unique_id: inbox_unique_id,
     };
-    await AxiosInstance.put("/operator/mark-as-read", data)
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    axios.put("/operator/mark-as-read", data)
       .then((response) => {
         props.getData();
       })
@@ -42,6 +45,8 @@ const Description = (props) => {
         showError(err + "");
       });
   };
+
+
   return (
     <div>
       {" "}

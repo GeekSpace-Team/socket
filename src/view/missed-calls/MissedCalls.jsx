@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Export from "../common-view/Export";
-import { Grid, Pagination, Stack } from "@mui/material";
+import {Button, Grid, Pagination, Stack} from "@mui/material";
 import PhoneCallbackIcon from "@mui/icons-material/PhoneCallback";
 import CallMadeIcon from "@mui/icons-material/CallMade";
 import Accordion from "@mui/material/Accordion";
@@ -11,25 +11,37 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MissedSort from "./MissedSort";
 import "../../style/missed-call/missed-call.css";
 import { showError } from "../Alert/Alert";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import MissedFilter from "./MissedFilter";
 import MissedPerPage from "./MissedPerPage";
 import MissedInfoModal from "./MissedInfoModal";
 import Loading from "../../common/Loading";
 import Empty from "../../common/Empty";
+import RingingCallSort from "../ringing-call/RingingCallSort";
+import RingingCallFilter from "../ringing-call/RingingCallFilter";
+import RingingPerPage from "../ringing-call/RingingPerPage";
+import CallInfoModal from "./CallInfoModal";
+import {useContext} from "react";
+import {AppContext} from "../../App";
+import {IosShare} from "@mui/icons-material";
+import {CSVLink} from "react-csv";
 
 const MissedCalls = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [incoming, setIncoming] = useState(false);
-  const [outgoing, setOutgoing] = useState(false);
+  const [incoming, setIncoming] = useState(true);
+  const [outgoing, setOutgoing] = useState(true);
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState(0);
   const [page_count, setPageCount] = useState(0);
   const [perPage, setPerPage] = useState(20);
   const [isEmptyPage, setEmptyPage] = useState(false);
 
+  const [fields, setFileds] = useState([]);
+
   const [list, setList] = useState([]);
+
+  const {online} = useContext(AppContext);
 
   const getData = async () => {
     const data = {
@@ -42,7 +54,7 @@ const MissedCalls = () => {
       sortBy: parseInt(sortBy),
     };
     // console.log(data);
-    await AxiosInstance.post("/operator/get-missed-calls", data)
+    await LocalAxiosInstance.post("/operator/get-missed-calls", data)
       .then((response) => {
         if (!response.data.error) {
           setList(response.data.body.calls);
@@ -75,9 +87,7 @@ const MissedCalls = () => {
   const handleChange = (event, value) => {
     setPage(value);
   };
-  useEffect(() => {
-    getData();
-  }, []);
+
   useEffect(() => {
     getData();
   }, [page]);
@@ -114,36 +124,62 @@ const MissedCalls = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const getFields = async () => {
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    await axios.get("/operator/get-fields")
+        .then((response) => {
+          setFileds(response.data.body);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  };
+
+
+  useEffect(() => {
+    getFields();
+    getData();
+
+  }, []);
+
   return (
     <div className="MmissedCallContainer container">
       {/* header section starts here */}
       <div className="missedHeader">
         <h3>Goyberilen janlar</h3>
-        <Export />
+        <Button startIcon={<IosShare/>} sx={{color:'black'}} variant={'text'}><CSVLink data={list} style={{textDecoration:'none',color:'black'}}
+                                                                                       filename={`Göýberilen jaňlar ${new Date()}.csv`}>Eksport</CSVLink></Button>
+
       </div>
       {/* header section ends here */}
+
+
+
+      <Stack direction="row" alignItems="center" spacing={3} sx={{mb:3}}>
+        <RingingCallSort sortBy={sortBy} setSortBy={setSortBy} />
+
+        <RingingCallFilter
+            startDate={startDate}
+            endDate={endDate}
+            incoming={incoming}
+            outgoing={outgoing}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+            setIncoming={setIncoming}
+            setOutgoing={setOutgoing}
+        />
+        <RingingPerPage perPage={perPage} setPerPage={setPerPage} />
+      </Stack>
+
+
       {(typeof list === "undefined" || list.length <= 0) && !isEmptyPage ? (
         <Loading />
       ) : (typeof list === "undefined" || list.length <= 0) && isEmptyPage ? (
         <Empty />
       ) : (
         <>
-          {/* filter section starts here */}
-          <Stack direction="row" alignItems="center" spacing={3}>
-            <MissedSort sortBy={sortBy} setSortBy={setSortBy} />
-            <MissedFilter
-              startDate={startDate}
-              endDate={endDate}
-              incoming={incoming}
-              outgoing={outgoing}
-              setStartDate={setStartDate}
-              setEndDate={setEndDate}
-              setIncoming={setIncoming}
-              setOutgoing={setOutgoing}
-            />
-            <MissedPerPage perPage={perPage} setPerPage={setPerPage} />
-          </Stack>
-          {/* filter section ends here */}
+
 
           {/* missed call section starts here */}
           <Grid
@@ -173,11 +209,22 @@ const MissedCalls = () => {
                             ) : (
                               <CallMadeIcon />
                             )}
-                            <span>Missed call</span>
+                            <span>
+                                {item.call_direction == "0" ? (
+                                    "Giriş jaň"
+                                ) : (
+                                    "Çykyş jaň"
+                                )}
+                            </span>
                           </Stack>
                           <Stack direction="row" spacing={7}>
                             <span>{item.phone_number}</span>
-                            <MissedInfoModal item={item} />
+                            <CallInfoModal
+                                getData={getData}
+                                fields={fields}
+                                item={item}
+                                key={`customer_update_ringing_$`}
+                            />
                           </Stack>
                         </Stack>
                         <h3>
@@ -198,7 +245,7 @@ const MissedCalls = () => {
                             id="panel1a-header"
                           >
                             <Typography>
-                              Janlar{" "}
+                              Jaňlar{" "}
                               <span style={{ color: "#3570A2" }}>
                                 ({item.call_history.length})
                               </span>
@@ -206,7 +253,6 @@ const MissedCalls = () => {
                           </AccordionSummary>
                           <AccordionDetails>
                             <hr />
-                            <Typography>Today</Typography>
                             {item.call_history
                               .slice(0, 3)
                               .map((call_item, index) => {
@@ -219,8 +265,8 @@ const MissedCalls = () => {
                                     >
                                       <span>
                                         {call_item.call_direction == 0
-                                          ? "Giris jan"
-                                          : "Cykys jan"}
+                                          ? "Giriş jaň"
+                                          : "Çykyş jaň"}
                                       </span>
                                       <span>{call_item.call_time}</span>
                                       <span>{`${parseInt(
@@ -234,7 +280,13 @@ const MissedCalls = () => {
                                 );
                               })}
 
-                            <MissedInfoModal wich={"show-all"} item={item} />
+                            <CallInfoModal
+                                getData={getData}
+                                fields={fields}
+                                wich={"show-all"}
+                                item={item}
+                                key={`customer_update_ringing_$`}
+                            />
                           </AccordionDetails>
                         </Accordion>
                       </div>

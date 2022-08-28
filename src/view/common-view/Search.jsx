@@ -2,14 +2,17 @@ import React from "react";
 import styled from "styled-components";
 import SearchIcon from "@mui/icons-material/Search";
 
-const Search = () => {
+const Search = (props) => {
   return (
     <div>
       <Searc>
         <div>
           <input
             type="text"
-            placeholder="At ya-da telefon belgi boyuncha gozleg"
+            value={props.search}
+            onChange={e=>props.setSearch(e.target.value)}
+            onKeyDown={props.handleKeyDown}
+            placeholder="Gözleg..."
           />
         </div>
         <SearchIconn>

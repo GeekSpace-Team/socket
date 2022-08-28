@@ -1,18 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Export from "../common-view/Export";
 import Search from "../common-view/Search";
 import Sync from "../common-view/Sync";
-import { Pagination, Stack } from "@mui/material";
+import { Button, Pagination, Stack } from "@mui/material";
 import CustomerUpdate from "./CustomerUpdate";
 import CustomerSort from "./CustomerSort";
 import "../../style/customer/customer.css";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import { showError } from "../Alert/Alert";
 import AddCustomerModal from "./AddCustomerModal";
 import CustomerFilter from "./CustomerFilter";
 import CustomerPerPage from "./CustomerPerPage";
 import Loading from "../../common/Loading";
 import Empty from "../../common/Empty";
+import { IosShare } from "@mui/icons-material";
+import { CSVLink } from "react-csv";
+import OrderFilter from "../order/OrderFilter";
+import {checkPermission} from "../../common/utils.mjs";
+import {AppContext} from "../../App";
+import SyncPage from "../../layout/sync/SyncPage";
 
 const CustomerCard = () => {
   const [startDate, setStartDate] = useState("");
@@ -24,6 +30,8 @@ const CustomerCard = () => {
   const [perPage, setPerPage] = useState(20);
   const [fields, setFileds] = useState([]);
   const [isEmptyPage, setEmptyPage] = useState(false);
+  const {online}=useContext(AppContext);
+  const [search,setSearch]=useState('');
 
   const [list, setList] = useState([]);
 
@@ -35,9 +43,11 @@ const CustomerCard = () => {
       page: page,
       perPage: perPage,
       sortBy: parseInt(sortBy),
+      search:search
     };
     // console.log(data);
-    await AxiosInstance.post("/operator/get-customers?page=1", data)
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    axios.post("/operator/get-customers?page=" + page, data)
       .then((response) => {
         if (!response.data.error) {
           setList(response.data.body.customers);
@@ -93,6 +103,10 @@ const CustomerCard = () => {
     getData();
   }, [perPage]);
 
+  useEffect(() => {
+    getData();
+  }, [status]);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -103,7 +117,8 @@ const CustomerCard = () => {
   };
 
   const getFields = async () => {
-    await AxiosInstance.get("/operator/get-fields")
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    axios.get("/operator/get-fields")
       .then((response) => {
         setFileds(response.data.body);
       })
@@ -116,15 +131,51 @@ const CustomerCard = () => {
     getFields();
   }, []);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      getData();
+    }
+  }
+
+  useEffect(()=>{
+    if(search.length===0){
+      getData();
+    }
+  },[search]);
+
+  const {permissions}=useContext(AppContext);
+
   return (
     <div className="customerCard container">
       <div className="customerHeader">
-        <h3>Musderiler</h3>
-        <Search />
-        <Export />
-        <Sync />
+        <h3>Müşderiler</h3>
+        <Search search={search} setSearch={setSearch} handleKeyDown={handleKeyDown}/>
+        <Button startIcon={<IosShare />} sx={{ color: 'black' }} variant={'text'}><CSVLink data={list} style={{ textDecoration: 'none', color: 'black' }}
+          filename={`Mushderiler ${new Date()}.csv`}>Eksport</CSVLink></Button>
+        <SyncPage getData={getData}/>
       </div>
-      <AddCustomerModal getData={getData} />
+      
+      <Stack direction={'row'} justifyContent={'space-between'}>
+        <Stack direction="row" alignItems="center" spacing={3}>
+          <CustomerSort sortBy={sortBy} setSortBy={setSortBy} />
+          <CustomerFilter
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+            status={status}
+            setStatus={setStatus}
+          />
+          <CustomerPerPage perPage={perPage} setPerPage={setPerPage} />
+        </Stack>
+        {
+          checkPermission('customer',permissions).write?
+              <AddCustomerModal getData={getData} />
+              :
+              null
+        }
+      </Stack>
+      <br/>
       {(typeof list === "undefined" || list.length <= 0) && !isEmptyPage ? (
         <Loading />
       ) : (typeof list === "undefined" || list.length <= 0) && isEmptyPage ? (
@@ -139,17 +190,23 @@ const CustomerCard = () => {
                     <label>{item.phone_number}</label>
                     <label>{item.fullname}</label>
                   </div>
-                  <CustomerUpdate
-                    getData={getData}
-                    item={item}
-                    fields={fields}
-                  />
+                  {
+                    checkPermission('customer',permissions).edit?
+                        <CustomerUpdate
+                            getData={getData}
+                            item={item}
+                            fields={fields}
+                        />
+                        :
+                        null
+                  }
+
                 </div>
                 <div className="customerCardTable">
                   <div className="CCTfirstRow">
-                    <label>Musderinin statusy</label>
+                    <label>Müşderiniň statusy:</label>
                     <label>Sargytlar:</label>
-                    <label>Yasayan yeri</label>
+                    <label>Ýaşaýan ýeri: </label>
                   </div>
                   <div className="CCTsecondRow">
                     <label>{item.customer_status_text}</label>

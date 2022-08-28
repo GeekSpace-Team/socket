@@ -1,14 +1,15 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import { Stack } from "@mui/material";
+import * as React from "react";
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useEffect } from "react";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Typography from "@mui/material/Typography";
+import { Select, Stack } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
-import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { AppContext } from "../../App";
 
 const ITEM_HEIGHT = 68;
 const ITEM_PADDING_TOP = 8;
@@ -22,150 +23,102 @@ const MenuProps = {
   },
 };
 
-const CustomerFilter = (props) => {
-  const [start, setStart] = React.useState(0);
-  const [end, setEnd] = React.useState(0);
-  const [incoming, setIncoming] = React.useState(false);
-  const [outgoing, setOutgoing] = React.useState(false);
+export default function CustomerFilter(props) {
+  const [start, setStart] = React.useState();
+  const [end, setEnd] = React.useState();
+
+  const { fields } = React.useContext(AppContext);
 
   React.useEffect(() => {
     props.setStartDate(start);
   }, [start]);
+
   React.useEffect(() => {
     props.setEndDate(end);
   }, [end]);
-  React.useEffect(() => {
-    props.setIncoming(incoming);
-  }, [incoming]);
-  React.useEffect(() => {
-    props.setOutgoing(outgoing);
-  }, [outgoing]);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleStartDate = (date) => {
+    let d = new Date(date);
+    setStart(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`);
+  }
+
+  const handleEndDate = (date) => {
+    let d = new Date(date);
+    setEnd(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`);
+  }
+
+
+
   return (
-    <Box>
-      <FormControl style={{ width: "150px" }}>
-        <InputLabel style={{ marginTop: "-7px" }} id="demo-simple-select-label">
-          Filter
-        </InputLabel>
-
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          label="Filter"
-          style={{
-            borderRadius: "50px",
-            height: "40px",
-            padding: "20px",
-            textAlign: "center",
-          }}
-          MenuProps={MenuProps}
-        >
-          <Stack p={2} mb={-2}>
-            <label style={{ color: "#585858", fontWeight: "600" }}>
-              Wagt boyunca
-            </label>
-          </Stack>
-          <Stack p={2} mb={-2} direction="row" alignItems="center">
-            {" "}
-            <Stack
-              alignItems="center"
-              p={0.3}
-              pl={2}
-              pr={1}
-              pt={0.4}
-              style={{
-                background: "#F1F1F1",
-                border: "1px solid #B1B1B1",
-                borderRadius: "2px 0px 0px 2px",
-              }}
-            >
-              <label htmlFor="startDate">Start date</label>
-            </Stack>
-            <Stack
-              p={0.8}
-              alignItems="center"
-              style={{
-                background: "#F5F8FC",
-                borderRadius: "0px 2px 2px 0px",
-                border: "1px solid #B1B1B1",
-              }}
-            >
-              <input
-                style={{
-                  border: "none",
-                  background: "transparent",
-                  outline: "none",
-                  appearance: "none",
-                  MozAppearance: "none",
-                }}
-                type="date"
-                value={props.startDate}
-                onChange={(e) => setStart(e.target.value)}
-              />
-            </Stack>
-          </Stack>
-          <Stack p={2} direction="row" alignItems="center">
-            {" "}
-            <Stack
-              alignItems="center"
-              p={0.3}
-              pl={2}
-              pr={1.5}
-              pt={0.4}
-              style={{
-                background: "#F1F1F1",
-                border: "1px solid #B1B1B1",
-                borderRadius: "2px 0px 0px 2px",
-              }}
-            >
-              <label htmlFor="endDate">End date</label>
-            </Stack>
-            <Stack
-              p={0.8}
-              alignItems="center"
-              style={{
-                background: "#F5F8FC",
-                borderRadius: "0px 2px 2px 0px",
-                border: "1px solid #B1B1B1",
-              }}
-            >
-              <input
-                style={{
-                  border: "none",
-                  background: "transparent",
-                  outline: "none",
-                  appearance: "none",
-                  MozAppearance: "none",
-                }}
-                type="date"
-                value={props.endDate}
-                onChange={(e) => setEnd(e.target.value)}
-              />
-            </Stack>
-          </Stack>
-          <Stack p={2} mb={-3}>
-            <label style={{ fontWeight: "600", color: "#585858" }}>
-              Status boyunca
-            </label>
+    <div>
+      <Button
+        id="basic-button"
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+        variant={'outlined'}
+        style={{ border: '1px solid', borderRadius: '22px', paddingLeft: '16px', paddingRight: '16px' }}
+        sx={{ color: '#585858', borderColor: '#585858' }}
+        endIcon={open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+      >
+        Filtr
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        style={{ borderRadius: '12px' }}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <div style={{ padding: '20px' }}>
+          <Typography>Wagt boýunça</Typography>
+          <Stack direction={'row'} sx={{ mt: 2 }}>
+            <Typography sx={{ backgroundColor: '#F1F1F1', padding: '8px', border: '1px solid #B1B1B1', width: '150px' }}>Başlangyç sene</Typography>
+            <Typography sx={{ padding: '8px', border: '1px solid #B1B1B1' }}><input type={"date"} className={'datePicker'} onChange={e => handleStartDate(e.target.value)} /></Typography>
           </Stack>
 
-          <FormGroup style={{ padding: "20px" }}>
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="Cykys jan"
-              value={props.incoming}
-              onChange={(e) => setOutgoing(e.target.value)}
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="Girish jan"
-              value={props.outgouing}
-              onChange={(e) => setIncoming(e.target.value)}
-            />
-          </FormGroup>
-        </Select>
-      </FormControl>
-    </Box>
+          <Stack direction={'row'} sx={{ mt: 2 }}>
+            <Typography sx={{ backgroundColor: '#F1F1F1', padding: '8px', border: '1px solid #B1B1B1', width: '150px' }}>Ahyrky sene</Typography>
+            <Typography sx={{ padding: '8px', border: '1px solid #B1B1B1' }}><input type={"date"} className={'datePicker'} onChange={e => handleEndDate(e.target.value)} /></Typography>
+          </Stack>
+          <br />
+          <Typography>Status boýunça</Typography>
+          <br/>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={props.status}
+            fullWidth={true}
+            variant={'standard'}
+            onChange={(e) => props.setStatus(e.target.value)}
+          >
+            <MenuItem value={0}>Hiçisi</MenuItem>
+            {fields.customer_status == null
+              ? ""
+              : fields.customer_status.map((item, i) => {
+                return (
+                  <MenuItem key={`status_key${i}`} value={item.id}>
+                    {item.value}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </div>
+
+      </Menu>
+    </div>
   );
-};
-
-export default CustomerFilter;
+}

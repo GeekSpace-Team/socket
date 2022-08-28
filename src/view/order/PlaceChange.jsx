@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {
   Button,
   IconButton,
@@ -10,11 +10,15 @@ import {
 import { Box } from "@mui/system";
 import EditIcon from "@mui/icons-material/Edit";
 import MapLocation from "./MapLocation";
+import {Edit} from "@mui/icons-material";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
+import {showError, showSuccess} from "../Alert/Alert";
+import {AppContext} from "../../App";
 
 const style = {
   position: "absolute",
   top: "50%",
-  left: "59%",
+  left: "50%",
   transform: "translate(-50%, -50%)",
   width: "55%",
   display: "block",
@@ -24,24 +28,78 @@ const style = {
   p: 2,
 };
 
-const PlaceChange = () => {
+const PlaceChange = (props) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const hoveredstyle = {
-    cursor: "initial",
-  };
+  const [address,setAddress]=useState('');
+  const [saddress,setSAddress]=useState('');
+  const [reason,setReason]=useState('');
+  const [latitude,setLatitude]=useState('');
+  const [longitude,setLongitude]=useState('');
+  const {online}=useContext(AppContext);
+
+  useEffect(()=>{
+      setAddress(saddress);
+  },[saddress]);
+
+  const update=()=>{
+      let unique_id=props.unique_id;
+      let data={
+          order_unique_id:unique_id,
+          address:address,
+          reason:reason
+      };
+      let axios=online?AxiosInstance:LocalAxiosInstance;
+      axios.put('/operator/change-order-address',data)
+          .then(response=>{
+              if(!response.data.error){
+
+                  props.addAddressHistory(response.data.body);
+                  if(latitude!=='' && longitude!==''){
+                      updateLocation();
+                  } else {
+                      showSuccess('Üstünlikli üýtgedildi!');
+                      props.getData();
+                  }
+              } else {
+                  showError('Ýalňyşlyk ýüze çykdy!');
+              }
+          })
+          .catch(err=>{
+              showError(err);
+          })
+  }
+
+  const updateLocation=()=>{
+      let unique_id=props.unique_id;
+      let data={
+          order_unique_id:unique_id,
+          latitude:latitude,
+          longitude:longitude,
+          reason:reason
+      };
+      let axios=online?AxiosInstance:LocalAxiosInstance;
+      axios.put('/operator/change-order-location',data)
+          .then(response=>{
+              if(!response.data.error){
+                  showSuccess('Üstünlikli üýtgedildi!');
+                  props.addLocationHistory(response.data.body);
+                  props.getData();
+              } else {
+                  showError('Ýalňyşlyk ýüze çykdy!');
+              }
+          })
+          .catch(err=>{
+              showError(err);
+          })
+  }
   return (
     <div>
       <Stack spacing={2} direction="row" alignItems={"center"}>
-        <label style={{ color: "#3570A2" }}>Uytget</label>
-        <IconButton
-          onClick={handleOpen}
-          tooltip="Description here"
-          hoveredstyle={hoveredstyle}
-        >
-          <EditIcon style={{ color: "#5E9CCE", fontSize: "26px" }} />
-        </IconButton>
+          <Button startIcon={<Edit/>} onClick={handleOpen} variant={'contained'} color={'secondary'}>
+              Üýtget
+          </Button>
       </Stack>
       <Modal
         open={open}
@@ -65,31 +123,35 @@ const PlaceChange = () => {
             <Stack width="100%">
               <Select
                 id="demo-simple-select"
-                // value={address}
+                value={saddress}
                 style={{
                   background: "#f0eefc",
                   border: "1px solid #5e9cce",
                   borderRadius: "16px",
                   height: "35px",
                 }}
-                // onChange={(e) => setAddress(e.target.value)}
+                onChange={(e) => setSAddress(e.target.value)}
               >
-                <MenuItem>Bashga yere</MenuItem>
+                <MenuItem value={props.home}>Ýaşaýan ýeri</MenuItem>
+                <MenuItem value={props.work}>Işleýän ýeri</MenuItem>
+                <MenuItem value={'Elde girizmeli'}>Başga ýere</MenuItem>
               </Select>
             </Stack>
             <Stack width="100%">
-              <input type="text" />
+              <input type="text" value={address} onChange={e=>setAddress(e.target.value)}/>
             </Stack>
             <Stack width="100%">
-              <MapLocation />
+                <MapLocation setLatitude={setLatitude} setLongitude={setLongitude} latitude={latitude} longitude={longitude}/>
             </Stack>
           </Stack>
 
           <Stack direction={"column"} className="eltipBermeli">
-            <Stack direction={"row"}>
+            <Stack direction={"row"} alignItems={'center'}>
               <label style={{ fontWeight: "600" }}>Sebabi :</label>
               <input
                 type="text"
+                value={reason}
+                onChange={e=>setReason(e.target.value)}
                 style={{
                   border: "none",
                   background: "transparent",
@@ -114,6 +176,7 @@ const PlaceChange = () => {
             </Button>
             <Button
               variant="contained"
+              onClick={()=>update()}
               style={{
                 borderRadius: "16px",
                 textTransform: "none",

@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Autocomplete,
   Button,
+  Checkbox,
+  FormControlLabel,
   IconButton,
   Stack,
   TextField,
@@ -12,21 +14,22 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
-import { showError } from "../Alert/Alert.jsx";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
+import { showError, showSuccess } from "../Alert/Alert.jsx";
 import Map from "./MapLocation.jsx";
 import MapLocation from "./MapLocation.jsx";
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { ToastContainer } from "react-toastify";
+import { convertTimeStampToDate, convertTimeStampToTime } from "../../common/utils.mjs";
+import { AppContext } from "../../App.js";
 
 const style = {
   position: "absolute",
-  top: "50%",
-  left: "59%",
-  transform: "translate(-50%, -50%)",
-  width: "60%",
+  // transform: "translate(-50%, -50%)",
+  width: "100%",
   height: "99%",
   overflow: "scroll",
   display: "block",
-  borderRadius: "16px",
   bgcolor: "#FAFCFB",
   boxShadow: 24,
   p: 4,
@@ -40,16 +43,21 @@ const AddOrderModal = (props) => {
   const [additional_information, setAdditional_information] = useState("");
   const [customer_unique_id, setCustomer_unique_id] = useState("");
   const [address, setAddress] = useState("");
+  const [saddress, setSAddress] = useState("");
   const [courier_unique_id, setCourier_unique_id] = useState("");
   const [order_date, setOrder_date] = useState("");
   const [order_time, setOrder_time] = useState("");
-  const [delivery_price, setDelivery_price] = useState("");
+  const [delivery_price, setDelivery_price] = useState("0");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [allCustomer, setAllCustomer] = useState([]);
+  const {allCustomer} = useContext(AppContext);
   const [status, setStatus] = useState("");
   const [courier, setCourier] = useState("");
-  const [couriers, setCouriers] = useState([]);
+  const {couriers} = useContext(AppContext);
+  const [value, setValue] = useState("");
+  const [home, setHome] = useState("");
+  const [work, setWork] = useState("");
+  const {online}=useContext(AppContext);
   const [products, setProducts] = useState([
     {
       product_name: "",
@@ -61,63 +69,79 @@ const AddOrderModal = (props) => {
       product_discount: 0,
       product_size: "",
       product_color: "",
-      product_count: "",
+      product_count: 1,
     },
   ]);
+
+  const checkUserUnqiueId=()=>{
+    try{
+      let temp=allCustomer.filter((item,i)=>item.unique_id==props.user_unique_id);
+      setValue(temp[0]);
+    } catch (err){
+    }
+  }
+
+  useEffect(()=>{
+    checkUserUnqiueId();
+  },[]);
 
   const hoveredstyle = {
     cursor: "initial",
   };
 
-  const customers = async () => {
-    await AxiosInstance.get("operator/get-all-customer")
-      .then((response) => {
-        setAllCustomer(response.data.body);
-      })
-      .catch((err) => {
-        showError(err + "");
-      });
-  };
+  useEffect(() => {
+    try {
+      setHome(value.address_home);
+      setWork(value.address_work);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [value]);
 
   useEffect(() => {
-    customers();
-  }, []);
+    setAddress(saddress);
+  }, [saddress]);
 
-  const getCouriers = async () => {
-    await AxiosInstance.get("/operator/get-couriers")
-      .then((response) => {
-        setCouriers(response.data.body);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  useEffect(() => {
-    getCouriers();
-  }, []);
-
-  const getStatuses = async () => {
-    await AxiosInstance.get("/operator/get-statuses")
-      .then((response) => {
-        setStatus(response.data.body);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  useEffect(() => {
-    getStatuses();
-  }, []);
+  const clearData=()=>{
+      setIs_express(false);
+      setAdditional_information("");
+      setCustomer_unique_id("");
+      setAddress("");
+      setSAddress("");
+      setCourier_unique_id("");
+      setOrder_date("");
+      setOrder_time("");
+      setDelivery_price("0");
+      setLatitude("");
+      setLongitude("");
+      setStatus("");
+      setCourier("");
+      setValue("");
+      setHome("");
+      setWork("");
+      setProducts([
+        {
+          product_name: "",
+          product_brand: "",
+          product_model: "",
+          product_artikul_code: "",
+          product_debt_price: 0,
+          product_cash_price: 0,
+          product_discount: 0,
+          product_size: "",
+          product_color: "",
+          product_count: 1,
+        },
+      ]);
+  }
 
   const addData = async () => {
     const data = {
       is_express: is_express,
       additional_information: additional_information,
-      customer_unique_id: customer_unique_id,
+      customer_unique_id: value.unique_id,
       address: address,
-      courier_unique_id: courier_unique_id,
+      courier_unique_id: courier,
       order_date: order_date,
       order_time: order_time,
       delivery_price: delivery_price,
@@ -126,12 +150,19 @@ const AddOrderModal = (props) => {
       status: status,
       products: products,
     };
-    await AxiosInstance.post("/operator/add-order", data)
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    axios.post("/operator/add-order", data)
       .then((response) => {
         if (!response.data.error) {
+          handleClose();
+          props.setPage(1);
+          props.getData();
+          clearData();
+          showSuccess('Sargyt üstünlikli goşuldy!');
+        } else {
+          showError('Ýalňyşlyk ýüze çykdy!');
         }
-        handleClose();
-        props.getData(1);
+
       })
       .catch((err) => {
         showError(err + "");
@@ -271,14 +302,27 @@ const AddOrderModal = (props) => {
         product_discount: 0,
         product_size: "",
         product_color: "",
-        product_count: "",
+        product_count: 1,
       },
     ];
     setProducts(newArray);
   };
 
+
+  const removeByIndex = (index) => {
+    let temp = products.filter((item, i) => i != index);
+    setProducts(temp);
+  }
+
+  useEffect(()=>{
+    if(courier != null && courier!=''){
+      setStatus('courier-pending');
+    }
+  },[courier]);
+
   return (
     <div>
+      <ToastContainer />
       <Button
         onClick={handleOpen}
         style={{
@@ -301,8 +345,8 @@ const AddOrderModal = (props) => {
         <Box sx={style}>
           <div className="SGMtitle">
             <Stack direction="row" spacing={3}>
-              <label>12.12.2022</label>
-              <label>15:00</label>
+              <label>{convertTimeStampToDate(new Date())}</label>
+              <label>{convertTimeStampToTime(new Date())}</label>
             </Stack>
             <label style={{ fontWeight: "600" }}>Sargyt girizmek</label>
           </div>
@@ -322,10 +366,14 @@ const AddOrderModal = (props) => {
           >
             <Stack direction="column" spacing={1.5} width="100%">
               <Autocomplete
-                options={customers}
+                value={value}
+                onChange={(event, newValue) => {
+                  setValue(newValue);
+                }}
+                options={allCustomer}
                 id="disable-close-on-select"
                 disableCloseOnSelect
-                value={""}
+                getOptionLabel={(option) => `${option.fullname} / ${option.phone_number}`}
                 width="100%"
                 renderInput={(params) => (
                   <TextField {...params} label="Ady" variant="standard" />
@@ -335,7 +383,7 @@ const AddOrderModal = (props) => {
           </Stack>
           <Stack direction="column" mt={3} spacing={1.5} width="100%">
             <Stack direction="row" spacing={3} width="100%">
-              <label>Gosmaca bellikler:</label>
+              <label>Goşmaça bellikler:</label>
               <input
                 type="text"
                 value={additional_information}
@@ -353,8 +401,10 @@ const AddOrderModal = (props) => {
           {products.map((item, i) => {
             return (
               <div className="AOharytBarada" key={`add_order_key${i}`}>
-                <Stack direction="row" mt={1} justifyContent={"center"}>
+                {i != 0 ? <Button endIcon={<RemoveCircleOutlineIcon />} color={'error'} sx={{ float: 'right' }} onClick={() => removeByIndex(i)}>Aýyr</Button> : null}
+                <Stack direction="row" mt={1} justifyContent={"center"} alignItems={'center'}>
                   <label style={{ fontWeight: "600" }}>Haryt barada</label>
+
                 </Stack>
                 <Stack
                   direction={{ xs: "column", sm: "row" }}
@@ -362,7 +412,7 @@ const AddOrderModal = (props) => {
                   mt={3}
                 >
                   <Stack width="100%" direction="column" spacing={1}>
-                    <label>Gornusi:</label>
+                    <label>Görnüşi:</label>
                     <input
                       type="text"
                       value={item.product_name}
@@ -382,16 +432,16 @@ const AddOrderModal = (props) => {
                     />
                   </Stack>
                   <Stack width="100%" direction="column" spacing={1}>
-                    <label>Tolegi:</label>
+                    <label>Artikuly:</label>
                     <input
-                      type="number"
-                      value={item.product_cash_price}
+                      type="text"
+                      value={item.product_artikul_code}
                       onChange={(e) =>
-                        updateProductCashPrice(e.target.value, i, item)
+                        updateProductArticulCode(e.target.value, i, item)
                       }
-                      placeholder="Nagt ..."
                     />
                   </Stack>
+
                 </Stack>
                 <Stack
                   direction={{ xs: "column", sm: "row" }}
@@ -400,33 +450,73 @@ const AddOrderModal = (props) => {
                 >
                   <Stack direction="row" mt={2} width="100%" spacing={5}>
                     <Stack width="100%" direction="column" spacing={1}>
-                      <label>Artikuly:</label>
+                      <label>Nagt:</label>
                       <input
-                        type="text"
-                        value={item.product_artikul_code}
+                        type="number"
+                        value={item.product_cash_price}
                         onChange={(e) =>
-                          updateProductArticulCode(e.target.value, i, item)
+                          updateProductCashPrice(e.target.value, i, item)
                         }
+                        placeholder="Nagt ..."
                       />
                     </Stack>
                     <Stack width="100%" direction="column" spacing={1}>
-                      <label>Modeli:</label>
-                      <input
-                        type="text"
-                        value={item.product_model}
+                      <label>Garaşaryna:</label>
+                      <input type="number" placeholder="Garasaryna ..."
+                        value={item.product_debt_price}
                         onChange={(e) =>
-                          updateProductModel(e.target.value, i, item)
+                          updateProductDebtPrice(e.target.value, i, item)
                         }
                       />
                     </Stack>
+                    <Stack width="100%" mt={2} direction="column" spacing={1}>
+                      <label>Arzanladyş:</label>
+                      <input
+                        type="text"
+                        value={item.product_discount}
+                        onChange={(e) =>
+                          updateProductDiscount(e.target.value, i, item)
+                        }
+                      />
+                    </Stack>
+
                   </Stack>
-                  <Stack width="48%" mt={2} direction="column" spacing={1}>
-                    <input type="number" placeholder="Garasaryna ..." />
+
+                </Stack>
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={{ xs: 1, sm: 2, md: 4 }}
+                  alignItems="center"
+                  mt={2}
+                  justifyContent={"space-between"}
+                >
+                  <Stack width="100%" direction="column" spacing={1}>
+                    <label>Modeli:</label>
                     <input
                       type="text"
-                      value={item.product_debt_price}
+                      value={item.product_model}
                       onChange={(e) =>
-                        updateProductDebtPrice(e.target.value, i, item)
+                        updateProductModel(e.target.value, i, item)
+                      }
+                    />
+                  </Stack>
+                  <Stack width="100%" direction="column" spacing={1}>
+                    <label>Ölçegi:</label>
+                    <input
+                      type="number"
+                      value={item.product_size}
+                      onChange={(e) =>
+                        updateProductSize(e.target.value, i, item)
+                      }
+                    />
+                  </Stack>
+                  <Stack width="100%" direction="column" spacing={1}>
+                    <label>Reňki:</label>
+                    <input
+                      type="text"
+                      value={item.product_color}
+                      onChange={(e) =>
+                        updateProductColor(e.target.value, i, item)
                       }
                     />
                   </Stack>
@@ -438,23 +528,14 @@ const AddOrderModal = (props) => {
                   mt={2}
                   justifyContent={"space-between"}
                 >
-                  <Stack width="30%" direction="column" spacing={1}>
-                    <label>Olchegi:</label>
+                  <Stack width="32%" direction="column" spacing={1}>
+                    <label>Haryt sany:</label>
                     <input
                       type="number"
-                      value={item.product_size}
+                      min="1"
+                      value={item.product_count}
                       onChange={(e) =>
-                        updateProductSize(e.target.value, i, item)
-                      }
-                    />
-                  </Stack>
-                  <Stack width="30%" direction="column" spacing={1}>
-                    <label>Renki:</label>
-                    <input
-                      type="text"
-                      value={item.product_color}
-                      onChange={(e) =>
-                        updateProductColor(e.target.value, i, item)
+                        updateProductCount(e.target.value, i, item)
                       }
                     />
                   </Stack>
@@ -462,15 +543,10 @@ const AddOrderModal = (props) => {
               </div>
             );
           })}
-          <Stack direction="row" onClick={addProduct} alignItems={"center"}>
-            <label style={{ color: "#5E9CCE", cursor: "pointer" }}>
-              Haryt gos
-            </label>
-            <IconButton tooltip="Description here" hoveredstyle={hoveredstyle}>
-              <AddCircleOutlineIcon
-                style={{ color: "#5E9CCE", fontSize: "16px" }}
-              />
-            </IconButton>
+          <Stack direction="row" alignItems={"center"}>
+            <Button onClick={addProduct} sx={{ color: "#5E9CCE" }} endIcon={<AddCircleOutlineIcon />}>
+              Haryt goş
+            </Button>
           </Stack>
 
           {/* Address section starts here */}
@@ -485,23 +561,25 @@ const AddOrderModal = (props) => {
                 <Stack width="100%">
                   <Select
                     id="demo-simple-select"
-                    value={address}
+                    value={saddress}
                     style={{
                       background: "#f0eefc",
                       border: "1px solid #5e9cce",
                       borderRadius: "16px",
                       height: "35px",
                     }}
-                    onChange={(e) => setAddress(e.target.value)}
+                    onChange={(e) => setSAddress(e.target.value)}
                   >
-                    <MenuItem>Bashga yere</MenuItem>
+                    <MenuItem value={home}>Ýaşaýan ýerine</MenuItem>
+                    <MenuItem value={work}>Iş ýerine</MenuItem>
+                    <MenuItem value={'Elde girizmeli'}>Başga ýere</MenuItem>
                   </Select>
                 </Stack>
                 <Stack width="100%">
-                  <input type="text" />
+                  <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
                 </Stack>
                 <Stack width="100%">
-                  <MapLocation />
+                  <MapLocation latitude={latitude} setLatitude={setLatitude} longitude={longitude} setLongitude={setLongitude} />
                 </Stack>
               </Stack>
               <hr />
@@ -563,9 +641,9 @@ const AddOrderModal = (props) => {
               </Stack>
               <Stack width="100%">
                 <label>Statusy :</label>
-              </Stack>{" "}
+              </Stack>
               <Stack width="100%">
-                <label>Jemi</label>
+                <label></label>
               </Stack>
             </Stack>
             <Stack
@@ -610,23 +688,24 @@ const AddOrderModal = (props) => {
                   }}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  <MenuItem value={"none"}>Taze sargyt</MenuItem>
-                  <MenuItem value={"pending"}>Garashylyar</MenuItem>
+                  <MenuItem value={"none"}>Täze sargyt</MenuItem>
+                  <MenuItem value={"pending"}>Garaşaryna</MenuItem>
                   <MenuItem value={"courier-pending"}>
-                    Kuryere ugradyldy
+                    Eltip berijä ugradyldy
                   </MenuItem>
                   <MenuItem value={"courier-accepted"}>
-                    Kuryer kabul etdi
+                    Eltip beriji kabul etdi
                   </MenuItem>
                   <MenuItem value={"courier-delivered"}>
-                    Kuryer eltip berdi
+                    Eltip beriji eltip berdi
                   </MenuItem>
                   <MenuItem value={"delivered"}>Sargyt tamamlandy</MenuItem>
-                  <MenuItem value={"rejected"}>Sargyt yatyryldy</MenuItem>
+                  <MenuItem value={"rejected"}>Sargyt ýatyryldy</MenuItem>
                 </Select>
               </Stack>
+
               <Stack width="100%">
-                <input type="number" />
+                <FormControlLabel control={<Checkbox checked={is_express} onChange={e=>setIs_express(e.target.checked)} />} label="Çalt eltip bermek hyzmaty barmy" />
               </Stack>
             </Stack>
             <Stack
@@ -637,6 +716,7 @@ const AddOrderModal = (props) => {
             >
               <Button
                 variant="outlined"
+                onClick={()=>clearData()}
                 style={{
                   borderRadius: "16px",
                   textTransform: "none",
@@ -644,7 +724,7 @@ const AddOrderModal = (props) => {
                   fontWeight: "600",
                 }}
               >
-                Delete all
+                Arassala
               </Button>
               <Button
                 onClick={() => addData()}
@@ -656,7 +736,7 @@ const AddOrderModal = (props) => {
                   fontWeight: "600",
                 }}
               >
-                Yatda sakla
+                Ýatda saklat
               </Button>
             </Stack>
           </div>

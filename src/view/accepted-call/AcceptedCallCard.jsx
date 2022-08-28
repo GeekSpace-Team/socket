@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import CallEndOutlinedIcon from '@mui/icons-material/CallEndOutlined';
 import RingVolumeOutlinedIcon from '@mui/icons-material/RingVolumeOutlined';
 import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
@@ -13,44 +13,25 @@ import { appSocket } from "../../api-interface/socket-io/socket.mjs";
 import { useEffect } from "react";
 import { callDirection, callState } from "../../common/constant.mjs";
 import Close from "@mui/icons-material/Close";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import AddCustomerModal from "../customer/AddCustomerModal";
+import {AppContext} from "../../App";
 
-const AcceptedCallCard = () => {
-  const [calls, setCalls] = useState([]);
+const AcceptedCallCard = (props) => {
+  
   const [fields, setFileds] = useState([]);
 
+  const {online}=useContext(AppContext);
 
   const callChecker = (call) => {
-    return calls.filter((item, i) => item.call.uniqueId !== call.call.uniqueId);
+    return props.calls.filter((item, i) => item.call.uniqueId !== call.call.uniqueId);
   }
-
-
-
-
-
-
-  appSocket.on("onCall", (arg, callback) => {
-    if (localStorage.getItem('unique_id') == arg.operator.unique_id) {
-      let checked = callChecker(arg);
-
-      let newArray = [
-        arg,
-        ...checked
-      ]
-      setCalls(newArray);
-    }
-  });
 
   const removeCall = (call) => {
     let checked = callChecker(call);
-    setCalls(checked);
+    props.setCalls(checked);
   }
 
-
-  useEffect(() => {
-    console.log(calls);
-  }, [calls]);
 
   const getIcon = (state, duration) => {
     let icon;
@@ -97,7 +78,8 @@ const AcceptedCallCard = () => {
   }
 
   const getFields = async () => {
-    await AxiosInstance.get("/operator/get-fields")
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    axios.get("/operator/get-fields")
       .then((response) => {
         setFileds(response.data.body);
       })
@@ -150,10 +132,10 @@ const AcceptedCallCard = () => {
       </div>
       <div>
         {
-          typeof calls === 'undefined' || calls == null || calls.length <= 0 || calls == '' ?
+          typeof props.calls === 'undefined' || props.calls == null || props.calls.length <= 0 || props.calls == '' ?
             <Empty />
             :
-            calls.map((item, i) => {
+            props.calls.map((item, i) => {
               return (
                 <div className="acceptCard" key={`accept_call_keey_${i}`}>
                   <div className="acceptCardHeader" style={{ backgroundColor: getColor(item.call.state, item.call.callDuration) }}>
@@ -182,8 +164,8 @@ const AcceptedCallCard = () => {
                   <div className="acceptRowCardSecond">
                     <div className="acceptCardBody">
                       <label>Statusy: </label>
-                      <label>Yasayan yeri: </label>
-                      <label>Ish yeri: </label>
+                      <label>Ýaşaýan ýeri: </label>
+                      <label>Iş ýeri: </label>
                     </div>
                     <div className="secondCardRow">
                       <label>{getCustomerStatus(item)}</label>
@@ -202,8 +184,8 @@ const AcceptedCallCard = () => {
                       <AddCustomerModal getData={()=>{}} key={`customer_update_${i}`} phone_number={item.call.phNumber}/>
                       :
                       <div>
-                        <AddOrderModal />
-                        <CustomerUpdate which={"accept-call"} item={item.customer[0]} fields={fields} key={`customer_update_${i}`} getData={()=>{}}/>
+                        <AddOrderModal user_unique_id={item.customer[0].unique_id} getData={()=>{}} setPage={(page)=>{}}/>
+                        {/*<CustomerUpdate which={"accept-call"} item={item.customer[0]} fields={fields} key={`customer_update_${i}`} getData={()=>{}}/>*/}
                       </div>
                     }
                   </div>

@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { Button, Grid, IconButton, Modal, Stack } from "@mui/material";
 import { Box } from "@mui/system";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import { showError, showSuccess } from "../Alert/Alert.jsx";
 import { ToastContainer } from "react-toastify";
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import {AppContext} from "../../App";
 
 const style = {
   position: "absolute",
-  top: "50%",
-  left: "59%",
-  transform: "translate(-50%, -50%)",
-  width: "60%",
-  height: "99%",
+  width: "100%",
+  height: "100vh",
   overflow: "scroll",
   display: "block",
-  borderRadius: "16px",
   bgcolor: "#FAFCFB",
   boxShadow: 24,
   p: 4,
@@ -28,7 +26,7 @@ const AddCustomerModal = (props) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [fullname, setFullname] = useState("");
-  const [phone_number, setPhone_number] = useState(typeof props.phone_number!== 'undefined' && props.phone_number != null ? props.phone_number : props.phone_number);
+  const [phone_number, setPhone_number] = useState(typeof props.phone_number!== 'undefined' && props.phone_number != null ? props.phone_number : '');
   const [question_mode, setQuestion_mode] = useState("");
   const [address_home, setAddress_home] = useState("");
   const [address_work, setAddress_work] = useState("");
@@ -47,6 +45,7 @@ const AddCustomerModal = (props) => {
       interested_product_color: "",
     },
   ]);
+  const {online}=useContext(AppContext);
   const clearCustomer = () => {
     setFullname("");
     setPhone_number("");
@@ -74,7 +73,8 @@ const AddCustomerModal = (props) => {
   };
 
   const getFields = async () => {
-    await AxiosInstance.get("/operator/get-fields")
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    axios.get("/operator/get-fields")
       .then((response) => {
         setFileds(response.data.body);
       })
@@ -103,32 +103,15 @@ const AddCustomerModal = (props) => {
       focus_word: word,
       interested_products: interested_products,
     };
-    await AxiosInstance.post("/operator/add-customer", data)
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    axios.post("/operator/add-customer", data)
       .then((response) => {
         if (!response.data.error) {
         }
         handleClose();
         props.getData(1);
         showSuccess("Musderi ustunlikli gosuldy !");
-        setFullname("");
-        setPhone_number("");
-        setQuestion_mode("");
-        setAddress_home("");
-        setAddress_work("");
-        setInformation("");
-        setStatus(0);
-        setAccent(0);
-        setMode(0);
-        setWord(0);
-        setTone(0);
-        setFindUs(0);
-        setInterested_products([
-          {
-            interested_product_name: "",
-            interested_product_size: "",
-            interested_product_color: "",
-          },
-        ]);
+        clearCustomer();
       })
       .catch((err) => {
         showError(err + "");
@@ -186,6 +169,11 @@ const AddCustomerModal = (props) => {
     setInterested_products(newArray);
   };
 
+  const removeByIndex = (index) => {
+    let temp = interested_products.filter((item, i) => i != index);
+    setInterested_products(temp);
+  }
+
   return (
     <div>
       <Stack
@@ -205,7 +193,7 @@ const AddCustomerModal = (props) => {
           }}
           variant="contained"
         >
-          Musderi gosh
+          Müşderi goş
         </Button>
       </Stack>
       <Modal
@@ -216,7 +204,7 @@ const AddCustomerModal = (props) => {
       >
         <Box sx={style}>
           <div className="CCMtitle">
-            <label>Musderi gosmak</label>
+            <label>Müşderi goşmak</label>
           </div>
           <div className="MGbutton">
             <IconButton
@@ -232,7 +220,7 @@ const AddCustomerModal = (props) => {
               <div className="CAname">
                 {/* <Stack direction="row" spacing={3}> */}
                 <Stack direction="row" spacing={2} alignItems="center">
-                  <label style={{ fontWeight: "600" }}>Ady :</label>
+                  <label style={{ fontWeight: "600" }}>Doly ady :</label>
                   <input
                     type="text"
                     value={fullname}
@@ -247,7 +235,7 @@ const AddCustomerModal = (props) => {
                 <Stack direction="row" spacing={2} alignItems="center">
                   <label style={{ fontWeight: "600" }}>Telefon belgisi :</label>
                   <input
-                    type="number"
+                    type="text"
                     value={phone_number}
                     onChange={(e) => setPhone_number(e.target.value)}
                   />
@@ -260,7 +248,7 @@ const AddCustomerModal = (props) => {
             <Grid item md={12} lg={12} sm={12} xs={12}>
               <div className="CAname">
                 <Stack direction="row" spacing={2} alignItems="center">
-                  <label style={{ fontWeight: "400" }}>Yasayan yeri :</label>
+                  <label style={{ fontWeight: "400" }}>Ýaşaýan ýeri :</label>
                   <input
                     type="text"
                     value={address_home}
@@ -275,7 +263,7 @@ const AddCustomerModal = (props) => {
             <Grid item md={12} lg={12} sm={12} xs={12}>
               <div className="CAname">
                 <Stack direction="row" spacing={2} alignItems="center">
-                  <label style={{ fontWeight: "400" }}>Is yeri :</label>
+                  <label style={{ fontWeight: "400" }}>Iş ýeri :</label>
                   <input
                     type="text"
                     value={address_work}
@@ -291,7 +279,7 @@ const AddCustomerModal = (props) => {
               <div className="CAname">
                 <Stack direction="row" spacing={2} alignItems="center">
                   <label style={{ fontWeight: "400" }}>
-                    Sorag sowda gatnasygy
+                    Sorag we söwda gatnaşygy:
                   </label>
                   <input
                     type="text"
@@ -308,7 +296,7 @@ const AddCustomerModal = (props) => {
               <div className="CAname">
                 <Stack direction="row" spacing={2} alignItems="center">
                   <label style={{ fontWeight: "400" }}>
-                    Gosmaca maglumatlar :
+                    Goşmaça maglumatlar :
                   </label>
                   <input
                     type="text"
@@ -323,19 +311,28 @@ const AddCustomerModal = (props) => {
           {interested_products.map((item, i) => {
             return (
               <div className="aboutGoods">
-                <Stack direction="row" justifyContent={"center"}>
-                  <label style={{ color: "#282828", fontWeight: "600" }}>
-                    Haryt barada
-                  </label>
+                
+                <Stack
+                  direction="row"
+                  justifyContent={"flex-end"}
+                  alignItems="center"
+                >
+                  <Stack direction="row" justifyContent={"center"} width="100%">
+                 
+                    <label style={{ color: "#282828", fontWeight: "600" }}>
+                      Haryt barada
+                    </label>
+                    
+                  </Stack>
+                  {i != 0 ? <Button endIcon={<RemoveCircleOutlineIcon />} color={'error'} sx={{ float: 'right' }} onClick={() => removeByIndex(i)}>Aýyr</Button> : null}
                 </Stack>
-
                 <Stack
                   direction={{ xs: "column", sm: "row" }}
                   spacing={{ xs: 1, sm: 2, md: 5 }}
                   key={`add_customer_key${i}`}
                 >
                   <Stack direction="column" spacing={1} width="100%">
-                    <label>Harydyn ady</label>
+                    <label>Harydyň ady</label>
                     <input
                       type="text"
                       value={item.interested_product_name}
@@ -345,7 +342,7 @@ const AddCustomerModal = (props) => {
                     />
                   </Stack>
                   <Stack direction="column" spacing={1} width="100%">
-                    <label>olcegi</label>
+                    <label>Ölçegi</label>
                     <input
                       type="number"
                       value={item.interested_product_size}
@@ -355,7 +352,7 @@ const AddCustomerModal = (props) => {
                     />
                   </Stack>
                   <Stack direction="column" spacing={1} width="100%">
-                    <label>Renki</label>
+                    <label>Reňki</label>
                     <input
                       type="text"
                       value={item.interested_product_color}
@@ -374,7 +371,7 @@ const AddCustomerModal = (props) => {
             alignItems={"center"}
           >
             <label style={{ color: "#5E9CCE", cursor: "pointer" }}>
-              Haryt gos
+              Haryt goş
             </label>
             <IconButton tooltip="Description here" hoveredstyle={hoveredstyle}>
               <AddCircleOutlineIcon
@@ -391,7 +388,7 @@ const AddCustomerModal = (props) => {
               p={1}
             >
               <Stack direction="column" width="100%" spacing={1}>
-                <label>Musderinin statusy :</label>
+                <label>Müşderiniň statusy :</label>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -406,7 +403,7 @@ const AddCustomerModal = (props) => {
                   }}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  <MenuItem value={0}>Hich haysy</MenuItem>
+                  <MenuItem value={0}>Hiçisi</MenuItem>
                   {fields.customer_status == null
                     ? ""
                     : fields.customer_status.map((item, i) => {
@@ -420,7 +417,7 @@ const AddCustomerModal = (props) => {
               </Stack>
               <Stack direction="column" width="100%" spacing={1}>
                 {" "}
-                <label>Gepleyis sekili :</label>
+                <label>Gepleýiş şekili :</label>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -435,7 +432,7 @@ const AddCustomerModal = (props) => {
                   }}
                   onChange={(e) => setMode(e.target.value)}
                 >
-                  <MenuItem value={0}>Hich haysy</MenuItem>
+                  <MenuItem value={0}>Hiçisi</MenuItem>
                   {fields.speak_mode == null
                     ? ""
                     : fields.speak_mode.map((item, i) => {
@@ -449,7 +446,7 @@ const AddCustomerModal = (props) => {
               </Stack>
               <Stack direction="column" width="100%" spacing={1}>
                 {" "}
-                <label>Nahili ahende gurlesyar :</label>
+                <label>Nähilli äheňde gürleşýär:</label>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -464,7 +461,7 @@ const AddCustomerModal = (props) => {
                   }}
                   onChange={(e) => setAccent(e.target.value)}
                 >
-                  <MenuItem value={0}>Hich haysy</MenuItem>
+                  <MenuItem value={0}>Hiçisi</MenuItem>
                   {fields.speak_accent == null
                     ? ""
                     : fields.speak_accent.map((item, i) => {
@@ -485,7 +482,7 @@ const AddCustomerModal = (props) => {
               <Stack direction="column" width="100%" spacing={1}>
                 {" "}
                 <label>
-                  Nahili ahende yuzlenilse <br /> gowy gorya :
+                  Nähilli äheňde ýüzlense gowy görýär :
                 </label>
                 <Select
                   labelId="demo-simple-select-label"
@@ -501,7 +498,7 @@ const AddCustomerModal = (props) => {
                   }}
                   onChange={(e) => setWord(e.target.value)}
                 >
-                  <MenuItem value={0}>Hich haysy</MenuItem>
+                  <MenuItem value={0}>Hiçisi</MenuItem>
                   {fields.focus_word == null
                     ? ""
                     : fields.focus_word.map((item, i) => {
@@ -515,7 +512,7 @@ const AddCustomerModal = (props) => {
               </Stack>
               <Stack direction="column" width="100%" spacing={1}>
                 {" "}
-                <label>Gurleyis tony :</label>
+                <label>Gürleýiş tony :</label>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -530,7 +527,7 @@ const AddCustomerModal = (props) => {
                   }}
                   onChange={(e) => setTone(e.target.value)}
                 >
-                  <MenuItem value={0}>Hich haysy</MenuItem>
+                  <MenuItem value={0}>Hiçisi</MenuItem>
                   {fields.speak_tone == null
                     ? ""
                     : fields.speak_tone.map((item, i) => {
@@ -559,7 +556,7 @@ const AddCustomerModal = (props) => {
                   }}
                   onChange={(e) => setFindUs(e.target.value)}
                 >
-                  <MenuItem value={0}>Hich haysy</MenuItem>
+                  <MenuItem value={0}>Hiçisi</MenuItem>
                   {fields.find_us == null
                     ? ""
                     : fields.find_us.map((item, i) => {
@@ -585,7 +582,7 @@ const AddCustomerModal = (props) => {
               }}
               variant="outlined"
             >
-              Delete all
+              Arassala
             </Button>
             <Button
               onClick={() => addData()}
@@ -598,7 +595,7 @@ const AddCustomerModal = (props) => {
               }}
               variant="contained"
             >
-              Yatda sakla
+              Ýatda saklat
             </Button>
           </Stack>
           {/* Delete all and Yatda sakla buttons section ends here */}

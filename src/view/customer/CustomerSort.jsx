@@ -7,6 +7,12 @@ import Select from "@mui/material/Select";
 import Radio from "@mui/material/Radio";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import RadioGroup from "@mui/material/RadioGroup";
+import Button from "@mui/material/Button";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import FormLabel from "@mui/material/FormLabel";
 
 const ITEM_HEIGHT = 58;
 const ITEM_PADDING_TOP = 8;
@@ -21,71 +27,67 @@ const MenuProps = {
 };
 
 const CustomerSort = (props) => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(props.sortBy);
 
   React.useEffect(() => {
     props.setSortBy(value);
   }, [value]);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
   return (
     <div>
-      <FormControl sx={{ m: 1, width: 150 }}>
-        <InputLabel
-          style={{ marginTop: "-7px" }}
-          id="demo-multiple-checkbox-label"
-        >
-          {items[value].label}
-        </InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          label={items[value].label}
-          style={{ borderRadius: "50px", height: "40px" }}
-          MenuProps={MenuProps}
-        >
-          <MenuItem>
+      <Button
+          id="basic-button"
+          aria-controls={open ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleClick}
+          variant={'outlined'}
+          style={{ border: '1px solid',borderRadius:'22px',paddingLeft:'16px',paddingRight:'16px' }}
+          sx={{color:'#585858',borderColor:'#585858'}}
+          endIcon={open?<KeyboardArrowUpIcon/>:<KeyboardArrowDownIcon/>}
+      >
+        Sort
+      </Button>
+      <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          style={{borderRadius:'12px'}}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+      >
+        <div style={{padding:'20px'}}>
+          <FormControl>
             <RadioGroup
-              aria-labelledby="demo-radio-buttons-group-label"
-              name="radio-buttons-group"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              style={{ padding: "20px" }}
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="0"
+                name="radio-buttons-group"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
             >
-              {items.map((item, i) => {
-                return (
-                  <FormControlLabel
-                    value={item.value}
-                    control={<Radio />}
-                    label={item.label}
-                    key={`select__${i}`}
-                  />
-                );
-              })}
+              <FormControlLabel value="0" control={<Radio />} label="Täzeden könä" />
+              <FormControlLabel value="1" control={<Radio />} label="Köneden täzä" />
+              <FormControlLabel value="2" control={<Radio />} label="A-dan Z-a" />
+              <FormControlLabel value="3" control={<Radio />} label="Z-dan A-a" />
             </RadioGroup>
-            {/* <Checkbox checked={personName.indexOf(name) > -1} /> */}
-            <ListItemText />
-          </MenuItem>
-        </Select>
-      </FormControl>
+          </FormControl>
+
+        </div>
+      </Menu>
     </div>
   );
 };
 
 export default CustomerSort;
-let items = [
-  {
-    value: 0,
-    label: "Tazeden kona",
-  },
-  {
-    value: 1,
-    label: "Koneden taza",
-  },
-  {
-    value: 2,
-    label: "A-dan Z-a",
-  },
-  {
-    value: 3,
-    label: "Z-dan A-a",
-  },
-];

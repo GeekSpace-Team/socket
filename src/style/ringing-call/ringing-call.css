@@ -37,3 +37,18 @@
 .callDate {
   padding: 20px;
 }
+
+
+/*New one*/
+.verticalLine {
+  border-left: thick solid #B1B1B1;
+}
+
+.datePicker{
+  border: none;
+  outline: none;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  color: #585858;
+}

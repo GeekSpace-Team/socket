@@ -1,18 +1,19 @@
 import { Button, IconButton, Modal, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { showError, showSuccess } from "../Alert/Alert";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import { ToastContainer } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
+import {AppContext} from "../../App";
 
 const style = {
   position: "absolute",
-  top: "20%",
+  top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "60%",
@@ -41,9 +42,12 @@ const Send = (props) => {
     cursor: "initial",
   };
 
+  const {online}=useContext(AppContext);
+
   const getCourier = async () => {
     setLoading(true);
-    await AxiosInstance.get("/operator/get-couriers")
+      let axios=online?AxiosInstance:LocalAxiosInstance;
+      axios.get("/operator/get-couriers")
       .then((response) => {
         if (!response.data.error) {
           setLisst(response.data.body);
@@ -76,14 +80,15 @@ const Send = (props) => {
       link_to_goal: link_to_goal,
       to_unique_id: value.unique_id,
     };
-    await AxiosInstance.post("/operator/add-inbox", data)
+      let axios=online?AxiosInstance:LocalAxiosInstance;
+      axios.post("/operator/add-inbox", data)
       .then((response) => {
         if (!response.data.error) {
           setList(response.data.body);
           setTitle("");
           setMessage("");
           handleClose();
-          showSuccess("Hatynyz ustunlikli ugradyld !!!");
+          showSuccess("Hatyňyz ugradyldy !!!");
           props.getData(1);
         }
       })
@@ -105,7 +110,7 @@ const Send = (props) => {
         }}
         variant="contained"
       >
-        Send message
+        Hat ugratmak
       </Button>{" "}
       <Modal
         open={open}
@@ -127,7 +132,7 @@ const Send = (props) => {
                   color: "#282828",
                 }}
               >
-                Send message
+                  Hat ugratmak
               </label>
             </Stack>
             <IconButton
@@ -167,7 +172,7 @@ const Send = (props) => {
                 spacing={2}
                 width="100"
               >
-                <label>Message title :</label>
+                <label>Hat sözbaşy:</label>
                 <input
                   type="text"
                   value={title}
@@ -184,7 +189,7 @@ const Send = (props) => {
           </Stack>
           <Stack direction="column" mt={2} spacing={1}>
             <Stack direction="row" spacing={2}>
-              <label>Message description :</label>
+              <label>Hat mazmuny:</label>
               <input
                 value={message}
                 onInput={(e) => setMessage(e.target.value)}
@@ -227,7 +232,7 @@ const Send = (props) => {
               onClick={handleClick}
             >
               {isLoading ? (
-                <Typography variant="action">Ugradylyar</Typography>
+                <Typography variant="action">Ugradylýar</Typography>
               ) : (
                 <Typography variant="action">Ugratmak</Typography>
               )}

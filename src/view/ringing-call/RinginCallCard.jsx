@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Grid, Stack } from "@mui/material";
+import React, { useEffect, useState, useContext  } from "react";
+import {Button, Grid, Stack} from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CallInfoModal from "../missed-calls/CallInfoModal";
 import Pagination from "@mui/material/Pagination";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import { showError } from "../Alert/Alert";
 import RingingCallFilter from "./RingingCallFilter";
 import RingingCallSort from "./RingingCallSort";
@@ -18,12 +18,16 @@ import "../../style/ringing-call/ringing-call.css";
 import RingingExport from "./RingingExport";
 import Empty from "../../common/Empty";
 import Loading from "../../common/Loading";
+import {AppContext} from "../../App";
+import { downloadExcel } from "react-export-table-to-excel";
+import {IosShare} from "@mui/icons-material";
+import { CSVLink, CSVDownload } from "react-csv";
 
 const RinginCallCard = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [incoming, setIncoming] = useState(false);
-  const [outgoing, setOutgoing] = useState(false);
+  const [incoming, setIncoming] = useState(true);
+  const [outgoing, setOutgoing] = useState(true);
   const [page, setPage] = useState(1);
   const [page_count, setPageCount] = useState(0);
   const [sortBy, setSortBy] = useState(0);
@@ -32,6 +36,10 @@ const RinginCallCard = () => {
   const [fields, setFileds] = useState([]);
 
   const [list, setList] = useState([]);
+
+  const {online} = useContext(AppContext);
+
+
 
   const getData = async () => {
     const data = {
@@ -44,7 +52,7 @@ const RinginCallCard = () => {
       sortBy: parseInt(sortBy),
     };
     // console.log(data);
-    await AxiosInstance.post("/operator/get-accepted-calls", data)
+    await LocalAxiosInstance.post("/operator/get-accepted-calls", data)
       .then((response) => {
         if (!response.data.error) {
           setList(response.data.body.calls);
@@ -76,12 +84,6 @@ const RinginCallCard = () => {
 
   useEffect(() => {
     getData();
-  }, []);
-  useEffect(() => {
-    getData();
-  }, [list]);
-  useEffect(() => {
-    getData();
   }, [page]);
 
   useEffect(() => {
@@ -109,7 +111,8 @@ const RinginCallCard = () => {
   }, [perPage]);
 
   const getFields = async () => {
-    await AxiosInstance.get("/operator/get-fields")
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    await axios.get("/operator/get-fields")
       .then((response) => {
         setFileds(response.data.body);
       })
@@ -120,6 +123,7 @@ const RinginCallCard = () => {
 
   useEffect(() => {
     getFields();
+    getData();
   }, []);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -133,14 +137,49 @@ const RinginCallCard = () => {
   const handleChange = (event, value) => {
     setPage(value);
   };
+
+
+  function handleDownloadExcel() {
+    let keys=Object.keys(list[0]);
+    console.log(keys);
+    downloadExcel({
+      fileName: "react-export-table-to-excel -> downloadExcel method",
+      sheet: "Kabul edilen jaňlar",
+      tablePayload: {
+        keys,
+        // accept two different data structures
+        body: list,
+      },
+    });
+  }
+
+
+
   return (
     <div className="RingingCallContainer container">
       {/* header section starts here */}
       <div className="ringingHeader">
-        <h3>Kabul edilen janlar</h3>
-        <RingingExport />
+        <h3>Kabul edilen jaňlar</h3>
+        <Button startIcon={<IosShare/>} sx={{color:'black'}} variant={'text'}><CSVLink data={list} style={{textDecoration:'none',color:'black'}}
+                                                                                       filename={`Kabul edilen jaňlar ${new Date()}.csv`}>Eksport</CSVLink></Button>
       </div>
       {/* header section ends here */}
+
+      <Stack direction="row" alignItems="center" spacing={3} sx={{mb:3}}>
+        <RingingCallSort sortBy={sortBy} setSortBy={setSortBy} />
+
+        <RingingCallFilter
+            startDate={startDate}
+            endDate={endDate}
+            incoming={incoming}
+            outgoing={outgoing}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+            setIncoming={setIncoming}
+            setOutgoing={setOutgoing}
+        />
+        <RingingPerPage perPage={perPage} setPerPage={setPerPage} />
+      </Stack>
 
       {(typeof list === "undefined" || list.length <= 0) && !isEmptyPage ? (
         <Loading />
@@ -149,21 +188,7 @@ const RinginCallCard = () => {
       ) : (
         <>
           {/* filter section starts here */}
-          <Stack direction="row" alignItems="center" spacing={3}>
-            <RingingCallSort sortBy={sortBy} setSortBy={setSortBy} />
 
-            <RingingCallFilter
-              startDate={startDate}
-              endDate={endDate}
-              incoming={incoming}
-              outgoing={outgoing}
-              setStartDate={setStartDate}
-              setEndDate={setEndDate}
-              setIncoming={setIncoming}
-              setOutgoing={setOutgoing}
-            />
-            <RingingPerPage perPage={perPage} setPerPage={setPerPage} />
-          </Stack>
           {/* filter section ends here */}
 
           {/* missed call section starts here */}
@@ -189,14 +214,20 @@ const RinginCallCard = () => {
                             ) : (
                               <CallMadeIcon />
                             )}
-                            <span>Missed call</span>
+                            <span>
+                              {item.call_direction == "0" ? (
+                                  "Giriş jaň"
+                              ) : (
+                                  "Çykyş jaň"
+                              )}
+                            </span>
                           </Stack>
                           <Stack direction="row" spacing={7}>
                             <span>{item.phone_number}</span>
                             <CallInfoModal
                               getData={getData}
                               fields={fields}
-                              item={item.customer}
+                              item={item}
                               key={`customer_update_ringing_$`}
                             />
                           </Stack>
@@ -219,7 +250,7 @@ const RinginCallCard = () => {
                             id="panel1a-header"
                           >
                             <Typography>
-                              Janlar{" "}
+                              Jaňlar{" "}
                               <span style={{ color: "#3570A2" }}>
                                 ({item.call_history.length})
                               </span>
@@ -227,7 +258,6 @@ const RinginCallCard = () => {
                           </AccordionSummary>
                           <AccordionDetails>
                             <hr />
-                            <Typography>Today</Typography>
                             {item.call_history
                               .slice(0, 3)
                               .map((call_item, index) => {
@@ -241,8 +271,8 @@ const RinginCallCard = () => {
                                     >
                                       <span>
                                         {call_item.call_direction == 0
-                                          ? "Giris jan"
-                                          : "Cykys jan"}
+                                          ? "Giriş jaň"
+                                          : "Çykyş jaň"}
                                       </span>
                                       <span>{call_item.call_time}</span>
                                       <span>{`${parseInt(
@@ -256,7 +286,13 @@ const RinginCallCard = () => {
                                 );
                               })}
 
-                            <CallInfoModal wich={"show-all"} item={item} />
+                            <CallInfoModal
+                                getData={getData}
+                                fields={fields}
+                                wich={"show-all"}
+                                item={item}
+                                key={`customer_update_ringing_$`}
+                            />
                           </AccordionDetails>
                         </Accordion>
                       </div>

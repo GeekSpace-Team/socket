@@ -1,31 +1,52 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { Button, Stack } from "@mui/material";
 import "../../style/loginPage/loginPage.css";
 // import { Link } from "react-router-dom";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import { showError } from "../../view/Alert/Alert";
 import { ToastContainer } from "react-toastify";
+import {AppContext} from "../../App";
+import SyncPage from "../sync/SyncPage";
 
 const LoginPage = () => {
   // const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const {online}=useContext(AppContext);
+  const [start,setStart]=useState(false);
+
+
+  const getData=()=>{
+    window.location.href = "/";
+  }
+
   const handleClick = () => {
     // setIsLoading(true);
     const data = {
       username: username,
       password: password,
+      fcmToken:localStorage.getItem('fcm_token'),
+      device:"web"
     };
-    AxiosInstance.post("/operator/auth/sign-in", data)
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    axios.post("/operator/auth/sign-in", data)
       .then((response) => {
         // setIsLoading(false);
         if (!response.data.error) {
           localStorage.setItem("my_token", response.data.body.token);
+          localStorage.setItem("local_token", response.data.body.token);
           localStorage.setItem("userID", response.data.body.userId);
           localStorage.setItem("user_type", response.data.body.user_type);
           localStorage.setItem("unique_id", response.data.body.unique_id);
-          window.location.href = "/";
+          localStorage.setItem("fullname", response.data.body.fullname);
+          localStorage.setItem("phone_number", response.data.body.phone_number);
+          localStorage.setItem("sell_point_id", response.data.body.sell_point_id);
+          localStorage.setItem("password", password);
+          localStorage.setItem("username", username);
+          setStart(true);
         } else {
           showError("Username or password is incorrect!");
         }
@@ -79,20 +100,25 @@ const LoginPage = () => {
             >
               Login
             </LoadingButton> */}
-            <Button
-              style={{
-                textTransform: "none",
-                backgroundColor: "#5E9CCE",
-                borderRadius: "32px",
-                height: "45px",
-              }}
-              // loading={isLoading}
-              variant="contained"
-              fullWidth
-              onClick={handleClick}
-            >
-              Log in
-            </Button>
+            {
+              start?
+                  <SyncPage getData={getData} open={true} autorun={true}/>
+                  :
+                  <Button
+                      style={{
+                        textTransform: "none",
+                        backgroundColor: "#5E9CCE",
+                        borderRadius: "32px",
+                        height: "45px",
+                      }}
+                      // loading={isLoading}
+                      variant="contained"
+                      fullWidth
+                      onClick={handleClick}
+                  >
+                    Log in
+                  </Button>
+            }
           </Stack>
         </Stack>
       </div>

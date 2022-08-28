@@ -3,11 +3,11 @@ import AcceptedCallCard from "../../view/accepted-call/AcceptedCallCard";
 import "../../style/acceptCall/acceptCall.css";
 
 
-const AcceptCall = () => {
+const AcceptCall = (props) => {
  
   return (
     <div>
-      <AcceptedCallCard/>
+      <AcceptedCallCard  setCalls={props.setCalls} calls={props.calls} />
     </div>
   );
 };

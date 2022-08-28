@@ -1,145 +1,99 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { Stack } from "@mui/material";
-
-// import Stepper from "@mui/material/Stepper";
+import * as React from "react";
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import {useEffect} from "react";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Typography from "@mui/material/Typography";
+import {Stack} from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const ITEM_HEIGHT = 68;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 270,
-      marginLeft: 63,
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 270,
+            marginLeft: 63,
+        },
     },
-  },
 };
 
-const OrderFilter = (props) => {
-  const [start, setStart] = React.useState(0);
-  const [end, setEnd] = React.useState(0);
+export default function OrderFilter(props) {
+    const [start, setStart] = React.useState();
+    const [end, setEnd] = React.useState();
 
-  React.useEffect(() => {
-    props.setStartDate(start);
-  }, [start]);
-  React.useEffect(() => {
-    props.setEndDate(end);
-  }, [end]);
-  return (
-    <Box>
-      <FormControl style={{ width: "150px" }}>
-        <InputLabel style={{ marginTop: "-7px" }} id="demo-simple-select-label">
-          Filter
-        </InputLabel>
+    React.useEffect(() => {
+        props.setStartDate(start);
+    }, [start]);
 
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          label="Filter"
-          style={{
-            borderRadius: "50px",
-            height: "40px",
-            padding: "20px",
-            textAlign: "center",
-          }}
-          MenuProps={MenuProps}
-        >
-          <Stack p={2} mb={-2}>
-            <label style={{ color: "#585858", fontWeight: "600" }}>
-              Wagt boyunca
-            </label>
-          </Stack>
-          <Stack p={2} mb={-2} direction="row" alignItems="center">
-            {" "}
-            <Stack
-              alignItems="center"
-              p={0.3}
-              pl={2}
-              pr={1}
-              pt={0.4}
-              style={{
-                background: "#F1F1F1",
-                border: "1px solid #B1B1B1",
-                borderRadius: "2px 0px 0px 2px",
-              }}
+    React.useEffect(() => {
+        props.setEndDate(end);
+    }, [end]);
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleStartDate=(date)=>{
+        let d=new Date(date);
+        setStart(`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`);
+    }
+
+    const handleEndDate=(date)=>{
+        let d=new Date(date);
+        setEnd(`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`);
+    }
+
+
+
+    return (
+        <div>
+            <Button
+                id="basic-button"
+                aria-controls={open ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}
+                variant={'outlined'}
+                style={{ border: '1px solid',borderRadius:'22px',paddingLeft:'16px',paddingRight:'16px' }}
+                sx={{color:'#585858',borderColor:'#585858'}}
+                endIcon={open?<KeyboardArrowUpIcon/>:<KeyboardArrowDownIcon/>}
             >
-              <label htmlFor="startDate">Start date</label>
-            </Stack>
-            <Stack
-              p={0.8}
-              alignItems="center"
-              style={{
-                background: "#F5F8FC",
-                borderRadius: "0px 2px 2px 0px",
-                border: "1px solid #B1B1B1",
-              }}
-            >
-              <input
-                style={{
-                  border: "none",
-                  background: "transparent",
-                  outline: "none",
-                  appearance: "none",
-                  MozAppearance: "none",
+                Filter
+            </Button>
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                style={{borderRadius:'12px'}}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
                 }}
-                type="date"
-                value={props.startDate}
-                onChange={(e) => setStart(e.target.value)}
-              />
-            </Stack>
-          </Stack>
-          <Stack p={2} direction="row" alignItems="center">
-            {" "}
-            <Stack
-              alignItems="center"
-              p={0.3}
-              pl={2}
-              pr={1.5}
-              pt={0.4}
-              style={{
-                background: "#F1F1F1",
-                border: "1px solid #B1B1B1",
-                borderRadius: "2px 0px 0px 2px",
-              }}
             >
-              <label htmlFor="endDate">End date</label>
-            </Stack>
-            <Stack
-              p={0.8}
-              alignItems="center"
-              style={{
-                background: "#F5F8FC",
-                borderRadius: "0px 2px 2px 0px",
-                border: "1px solid #B1B1B1",
-              }}
-            >
-              <input
-                style={{
-                  border: "none",
-                  background: "transparent",
-                  outline: "none",
-                  appearance: "none",
-                  MozAppearance: "none",
-                }}
-                type="date"
-                value={props.endDate}
-                onChange={(e) => setEnd(e.target.value)}
-              />
-            </Stack>
-          </Stack>
-          <Stack p={2} mb={-3}>
-            <label style={{ fontWeight: "600", color: "#585858" }}>
-              Status boyunca
-            </label>
-          </Stack>
-        </Select>
-      </FormControl>
-    </Box>
-  );
-};
+                <div style={{padding:'20px'}}>
+                    <Typography>Wagt boýunça</Typography>
+                    <Stack direction={'row'} sx={{mt:2}}>
+                        <Typography sx={{backgroundColor:'#F1F1F1',padding:'8px',border:'1px solid #B1B1B1',width:'150px'}}>Başlangyç sene</Typography>
+                        <Typography sx={{padding:'8px',border:'1px solid #B1B1B1'}}><input type={"date"} className={'datePicker'} onChange={e=>handleStartDate(e.target.value)}/></Typography>
+                    </Stack>
 
-export default OrderFilter;
+                    <Stack direction={'row'} sx={{mt:2}}>
+                        <Typography sx={{backgroundColor:'#F1F1F1',padding:'8px',border:'1px solid #B1B1B1',width:'150px'}}>Ahyrky sene</Typography>
+                        <Typography sx={{padding:'8px',border:'1px solid #B1B1B1'}}><input type={"date"} className={'datePicker'}  onChange={e=>handleEndDate(e.target.value)}/></Typography>
+                    </Stack>
+                </div>
+
+            </Menu>
+        </div>
+    );
+}

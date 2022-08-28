@@ -7,6 +7,14 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Menu from "@mui/material/Menu";
+import {IconButton, Stack} from "@mui/material";
+import RemoveIcon from '@mui/icons-material/Remove';
+import AddIcon from '@mui/icons-material/Add';
+import Typography from "@mui/material/Typography";
 
 const ITEM_HEIGHT = 78;
 const ITEM_PADDING_TOP = 8;
@@ -26,84 +34,72 @@ const CustomerPerPage = (props) => {
   React.useEffect(() => {
     props.setPerPage(value);
   }, [value]);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <div>
-      {" "}
-      <Box>
-        <FormControl style={{ width: "130px" }}>
-          <InputLabel
-            style={{ marginTop: "-7px" }}
-            id="demo-simple-select-label"
-          >
-            Per page
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Page"
-            style={{
-              borderRadius: "50px",
-              height: "40px",
-              textAlign: "center",
-            }}
-            MenuProps={MenuProps}
-          >
+      <Button
+          id="basic-button"
+          aria-controls={open ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleClick}
+          variant={'outlined'}
+          style={{ border: '1px solid',borderRadius:'22px',paddingLeft:'16px',paddingRight:'16px' }}
+          sx={{color:'#585858',borderColor:'#585858'}}
+          endIcon={open?<KeyboardArrowUpIcon/>:<KeyboardArrowDownIcon/>}
+      >
+        Sahypa sany
+      </Button>
+      <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          style={{borderRadius:'12px'}}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+      >
+        <div style={{padding:'20px'}}>
+          <FormControl>
             <RadioGroup
-              aria-labelledby="demo-radio-buttons-group-label"
-              name="radio-buttons-group"
-              style={{ padding: "20px" }}
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-            >
-              <FormControlLabel
-                value="20"
-                control={<Radio />}
-                label="20 items"
-              />
-              <FormControlLabel
-                value="40"
-                control={<Radio />}
-                label="40 items"
-              />
-              <FormControlLabel
-                value="60"
-                control={<Radio />}
-                label="60 items"
-              />
-              <FormControlLabel
-                value="80"
-                control={<Radio />}
-                label="80 items"
-              />
-              <FormControlLabel
-                value="100"
-                control={<Radio />}
-                label="100 items"
-              />
-            </RadioGroup>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "20ch" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <TextField
-                id="standard-basic"
-                label="Custom input"
-                variant="standard"
-                type={"number"}
-                defaultValue={20}
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="0"
+                name="radio-buttons-group"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-              />
-            </Box>
-          </Select>
-        </FormControl>
-      </Box>
+            >
+              <FormControlLabel value="20" control={<Radio />} label="20 sany" />
+              <FormControlLabel value="40" control={<Radio />} label="40 sany" />
+              <FormControlLabel value="60" control={<Radio />} label="60 sany" />
+              <FormControlLabel value="80" control={<Radio />} label="80 sany" />
+              <FormControlLabel value="100" control={<Radio />} label="100 sany" />
+            </RadioGroup>
+          </FormControl>
+
+          <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
+            <IconButton onClick={()=>setValue(value-1)}><RemoveIcon/></IconButton>
+            <Typography>{value}</Typography>
+            <IconButton onClick={()=>setValue(value+1)}><AddIcon/></IconButton>
+          </Stack>
+
+
+
+        </div>
+      </Menu>
     </div>
   );
 };
+
+
 
 export default CustomerPerPage;

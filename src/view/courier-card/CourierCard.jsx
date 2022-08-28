@@ -1,13 +1,17 @@
-import { Grid, Stack } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {Button, Grid, Stack} from "@mui/material";
+import React, {useContext, useEffect, useState} from "react";
 import Export from "../common-view/Export";
 import Box from "@mui/material/Box";
 import "../../style/courier/courier.css";
-import { AxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import { showError } from "../Alert/Alert";
 import { ToastContainer } from "react-toastify";
 import Empty from "../../common/Empty";
 import Loading from "../../common/Loading";
+import {IosShare} from "@mui/icons-material";
+import {CSVLink} from "react-csv";
+import {AppContext} from "../../App";
+import CourierOrders from "./CourierOrders";
 
 const CourierCard = () => {
   const [fullname, setFullname] = useState("");
@@ -31,9 +35,7 @@ const CourierCard = () => {
     setAge(event.target.value);
   };
 
-  const hoveredstyle = {
-    cursor: "initial",
-  };
+  const {online}=useContext(AppContext);
 
   const getData = async () => {
     const data = {
@@ -50,7 +52,8 @@ const CourierCard = () => {
       sell_point_id: sell_point_id,
       unique_id: unique_id,
     };
-    await AxiosInstance.get("/operator/get-couriers", data)
+    let axios=online?AxiosInstance:LocalAxiosInstance;
+    axios.get("/operator/get-couriers-full", data)
       .then((response) => {
         if (!response.data.error) {
           setList(response.data.body);
@@ -82,9 +85,12 @@ const CourierCard = () => {
       <div className="courierHeader">
         <h3>Eltip berijiler</h3>
         <Stack direction="row" justifyContent={"flex-end"} spacing={3}>
-          <Export />
+          <Button startIcon={<IosShare />} sx={{ color: 'black' }} variant={'text'}><CSVLink
+              data={list} style={{ textDecoration: 'none', color: 'black' }}
+              filename={`Eltip berijiler ${new Date()}.csv`}>Eksport</CSVLink></Button>
         </Stack>
       </div>
+      <br/>
       {(typeof list === "undefined" || list.length <= 0) && !isEmptyPage ? (
         <Loading />
       ) : (typeof list === "undefined" || list.length <= 0) && isEmptyPage ? (
@@ -102,57 +108,65 @@ const CourierCard = () => {
               return (
                 <Grid
                   item
-                  xs={2}
+                  xs={12}
                   sm={6}
                   md={6}
-                  p={3}
+
                   key={`courier_key${i}`}
-                  style={{
-                    background: "#FAFCFB",
-                    boxShadow: "0px 0px 10px rgba(129,129,129,0.15)",
-                    borderRadius: "16px",
-                  }}
                 >
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                  >
-                    <label
-                      style={{
-                        fontWeight: "600",
-                        fontSize: "18px",
-                        color: "#282828",
-                      }}
-                    >
-                      {item.phone_number}
-                    </label>
-                  </Stack>
-                  <Stack>
-                    <label
-                      style={{
-                        fontWeight: "600",
-                        fontSize: "18px",
-                        color: "#282828",
-                      }}
-                    >
-                      {item.fullname}
-                    </label>
-                  </Stack>
-                  <Stack
-                    mt={2}
-                    style={{
-                      background: "#ECF9FC",
-                      border: "1px solid #e2e2e2",
-                      borderRadius: "16px",
-                    }}
-                    p={1}
-                    direction="row"
-                    spacing={2}
-                  >
-                    <label>Status :</label>
-                    <label>{item.status == 1 ? "Ishjen" : "Ishjen dal"}</label>
-                  </Stack>
+                 <Box
+                     style={{
+                       background: "#FAFCFB",
+                       boxShadow: "0px 0px 10px rgba(129,129,129,0.15)",
+                       borderRadius: "16px",
+                     }}
+                     p={3}
+                 >
+                   <Stack
+                       direction="row"
+                       alignItems="center"
+                       justifyContent="space-between"
+                   >
+                     <label
+                         style={{
+                           fontWeight: "600",
+                           fontSize: "18px",
+                           color: "#282828",
+                         }}
+                     >
+                       {item.phone_number}
+                     </label>
+                   </Stack>
+                   <Stack>
+                     <label
+                         style={{
+                           fontWeight: "600",
+                           fontSize: "18px",
+                           color: "#282828",
+                         }}
+                     >
+                       {item.fullname}
+                     </label>
+                   </Stack>
+                   <Stack
+                       mt={2}
+                       style={{
+                         background: "#ECF9FC",
+                         border: "1px solid #e2e2e2",
+                         borderRadius: "16px",
+                       }}
+                       p={1}
+                       direction="row"
+                       spacing={2}
+                   >
+                     <label>Status :</label>
+                     <label>{item.status == 1 ? "Işjeň" : "Işjeň däl"}</label>
+                   </Stack>
+                   <br/>
+                   <center>
+                     <CourierOrders unique_id={item.unique_id}/>
+                   </center>
+                 </Box>
                 </Grid>
               );
             })}

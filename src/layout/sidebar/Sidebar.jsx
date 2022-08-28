@@ -16,7 +16,7 @@ export default Sidebar;
 
 export const sidebarItems = [
   {
-    title: "Home",
+    title: "Baş sahypa",
     icon: <HomeOutlinedIcon />,
     link: "/",
   },

@@ -1,7 +1,11 @@
-import React from "react";
+import React, {useContext, useState} from "react";
 import { Button, IconButton, Modal, Stack } from "@mui/material";
 import { Box } from "@mui/system";
 import EditIcon from "@mui/icons-material/Edit";
+import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
+import {showError, showSuccess} from "../Alert/Alert";
+import {Edit} from "@mui/icons-material";
+import {AppContext} from "../../App";
 
 const style = {
   position: "absolute",
@@ -16,24 +20,48 @@ const style = {
   p: 2,
 };
 
-const DateAndTime = () => {
+const DateAndTime = (props) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const hoveredstyle = {
-    cursor: "initial",
-  };
+
+  const [date,setDate]=useState('');
+  const [time,setTime]=useState('');
+  const [reason,setReason]=useState('');
+
+  const {online}=useContext(AppContext);
+
+
+  const update=()=>{
+      let data={
+          order_unique_id:props.order_unique_id,
+          order_date:date,
+          order_time:time,
+          reason:reason
+      };
+
+      let axios=online?AxiosInstance:LocalAxiosInstance;
+      axios.put('/operator/change-order-date',data)
+          .then(response=>{
+              if(!response.data.error){
+                  showSuccess('Üstünlikli üýtgedildi!');
+                  props.addDateHistory(response.data.body);
+                  props.getData();
+              } else {
+                  showError('Ýalňyşlyk ýüze çykdy!');
+              }
+          })
+          .catch(err=>{
+              showError(err);
+          })
+  }
+
   return (
     <div>
       <Stack spacing={2} direction="row" alignItems={"center"}>
-        <label style={{ color: "#3570A2" }}>Uytget</label>
-        <IconButton
-          onClick={handleOpen}
-          tooltip="Description here"
-          hoveredstyle={hoveredstyle}
-        >
-          <EditIcon style={{ color: "#5E9CCE", fontSize: "26px" }} />
-        </IconButton>
+          <Button startIcon={<Edit/>} onClick={handleOpen} variant={'contained'} color={'secondary'}>
+              Üýtget
+          </Button>
       </Stack>
       <Modal
         open={open}
@@ -56,6 +84,7 @@ const DateAndTime = () => {
             <Stack width="100%">
               <input
                 type="date"
+                onChange={e=>setDate(e.target.value)}
                 // onChange={(e) => setOrder_date(e.target.value)}
                 // value={order_date}
               />
@@ -63,6 +92,7 @@ const DateAndTime = () => {
             <Stack width="100%">
               <input
                 type="time"
+                onChange={e=>setTime(e.target.value)}
                 // onChange={(e) => setOrder_time(e.target.value)}
                 // value={order_time}
                 style={{ padding: "6px 16px" }}
@@ -71,9 +101,11 @@ const DateAndTime = () => {
           </Stack>
           <Stack className="eltipBermeli" direction={"column"}>
             <Stack direction={"row"}>
-              <label style={{ fontWeight: "600" }}>Sebabi :</label>
+              <label style={{ fontWeight: "600" }}>Sebäbi :</label>
               <input
                 type="text"
+                value={reason}
+                onChange={e=>setReason(e.target.value)}
                 style={{
                   border: "none",
                   background: "transparent",
@@ -94,10 +126,11 @@ const DateAndTime = () => {
                 fontWeight: "600",
               }}
             >
-              Yatyr
+              Ýatyr
             </Button>
             <Button
               variant="contained"
+              onClick={()=>update()}
               style={{
                 borderRadius: "16px",
                 textTransform: "none",
@@ -105,7 +138,7 @@ const DateAndTime = () => {
                 fontWeight: "600",
               }}
             >
-              OK
+              Ýatda saklat
             </Button>
           </Stack>
         </Box>
