@@ -17,7 +17,7 @@ import PropTypes from "prop-types";
 import { Box } from "@mui/system";
 import MailIcon from '@mui/icons-material/Mail';
 import { useState } from "react";
-import { appSocket } from "./api-interface/socket-io/socket.mjs";
+import {appSocket, onlineSocket} from "./api-interface/socket-io/socket.mjs";
 import {AxiosInstance, LocalAxiosInstance} from "./api-interface/api/AxiosInstance.mjs";
 import '../src/style/sidebar/sidebar.css';
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -25,7 +25,7 @@ import { css } from "@emotion/react";
 import {Logout} from "@mui/icons-material";
 import {AppContext} from "./App";
 import LoadingOverlay from 'react-loading-overlay';
-import {checkPermissionSidebar} from "./common/utils.mjs";
+import {checkPermissionSidebar, loginChecker} from "./common/utils.mjs";
 import { styled } from '@mui/material/styles';
 import Typography from "@mui/material/Typography";
 
@@ -147,7 +147,7 @@ const Sidebar = (props) => {
 
   useEffect(()=>{
    getUnreadCount();
-    appSocket.on("onInbox",(arg,callback)=>{
+    onlineSocket.on("onInbox",(arg,callback)=>{
       if(arg.unique_id==localStorage.getItem('unique_id')){
         props.setUnreadCount(arg.unread_inbox_count);
       }
@@ -184,7 +184,9 @@ const Sidebar = (props) => {
   const [currentPage,setCurrentPage]=React.useState('');
 
   React.useEffect(() => {
+    loginChecker();
     setCurrentPage(location.pathname);
+
   }, [location]);
 
   const drawer = (

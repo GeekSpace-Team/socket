@@ -80,3 +80,14 @@ export const checkPermission=(type,permissions)=>{
     }
     return result;
 }
+
+export const loginChecker=()=>{
+    try{
+        let token=window.sessionStorage.getItem("token");
+        if(typeof token === 'undefined' || token == null || token == ''){
+            window.location.href='/login';
+        }
+    } catch(err){
+        window.location.href='/login';
+    }
+}

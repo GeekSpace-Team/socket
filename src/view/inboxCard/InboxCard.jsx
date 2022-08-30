@@ -130,11 +130,13 @@ const InboxCard = (props) => {
             });
     };
 
-    onlineSocket.on("onInbox", (arg, callback) => {
-        if (arg.unique_id == localStorage.getItem('unique_id')) {
-            setPage(1);
-        }
-    })
+    useEffect(()=>{
+        onlineSocket.on("onInbox", (arg, callback) => {
+            if (arg.unique_id == localStorage.getItem('unique_id')) {
+                getUnreadCount();
+            }
+        })
+    },[]);
 
 
     const markAsRead = async () => {
@@ -211,7 +213,7 @@ const InboxCard = (props) => {
                     {list.map((item, i) => {
                         return (
                             <div
-                                onClick={()=>handleOpenn(item)}
+
                                 className="inboxCardContainer"
                                 style={
                                     item.is_read
@@ -235,20 +237,26 @@ const InboxCard = (props) => {
                                             <MoreVertIcon/>
                                         </IconButton>
                                     </Stack>
-                                    <Stack direction="row" spacing={10}>
+                                    <Stack
+                                        onClick={()=>handleOpenn(item)}
+                                        direction="row" spacing={10}>
                                         <label style={{fontWeight: "600"}}>
                                             {item.sender_name == null
                                                 ? item.sender_courier_name
                                                 : item.sender_name}
                                         </label>
-                                        <Stack direction="row" spacing={3}>
+                                        <Stack
+                                            onClick={()=>handleOpenn(item)}
+                                            direction="row" spacing={3}>
                                             <label>
                                                 {`${convertTimeStampToDate(item.created_at)} / ${convertTimeStampToTime(item.created_at)}`}
                                             </label>
                                             {/* <label>{item.}</label> */}
                                         </Stack>
                                     </Stack>
-                                    <Stack mt={3}>
+                                    <Stack
+                                        onClick={()=>handleOpenn(item)}
+                                        mt={3}>
                                         <label>{item.message}</label>
                                     </Stack>
                                 </Stack>

@@ -92,12 +92,21 @@ export default function CourierOrders(props) {
     }
 
     const datetimeDifference=(start,end)=>{
-        let a=moment(start);
-        let b=moment(end);
+        let a=moment(new Date(start));
+        let b=moment(new Date(end));
         let duration = moment.duration(b.diff(a));
         let hour=parseInt(duration.asMinutes()/60);
+        console.log(`${start} / ${end} --- ${duration.asMinutes()}`);
         let minutes=parseInt(duration.asMinutes()%60);
-        return `${hour>0?+hour+' sag :':''}${minutes} min`
+        return `${hour>0?hour+' sag :':''}${minutes} min`
+    }
+
+    const orderByDesc=(array)=>{
+        return array.sort(function compare(a, b) {
+            var dateA = new Date(a);
+            var dateB = new Date(b);
+            return dateA - dateB;
+          });
     }
 
     return (
@@ -143,12 +152,12 @@ export default function CourierOrders(props) {
                                         <br/>
                                         <Stepper activeStep={list!=null && list.length>0?list.length-1:0}>
                                             {
-                                                getListByDate(ee).map((e,i)=>{
+                                                orderByDesc(getListByDate(ee)).map((e,i)=>{
                                                     return(
                                                         <Step key={`stepper_key_${i}`}>
                                                             <StepLabel>
                                                                 <Typography>
-                                                                    {`${e.fullname} / ${e.phone_number} / ${convertTimeStampToTime(e.current_status)} ${i>0?'/ Aralyk: '+datetimeDifference(list[i-1].current_status,e.current_status):''}`}
+                                                                    {`${e.fullname} / ${e.phone_number} / ${convertTimeStampToTime(e.current_status)} ${i>0?'/ Aralyk: '+datetimeDifference(getListByDate(ee)[i-1].current_status,e.current_status):''}`}
                                                                 </Typography>
                                                             </StepLabel>
                                                         </Step>

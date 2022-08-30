@@ -21,6 +21,20 @@ const LoginPage = () => {
     window.location.href = "/";
   }
 
+  const parallelAxiosChecker=(data)=>{
+    let parallelAxios=online?LocalAxiosInstance:AxiosInstance;
+    parallelAxios.post("/operator/auth/sign-in", data)
+      .then((response) => {
+        // setIsLoading(false);
+        if (!response.data.error) {
+          localStorage.setItem("parallel_token", response.data.body.token);
+        } else {
+        }
+      })
+      .catch((err) => {
+      });
+  }
+
   const handleClick = () => {
     // setIsLoading(true);
     const data = {
@@ -36,6 +50,7 @@ const LoginPage = () => {
       .then((response) => {
         // setIsLoading(false);
         if (!response.data.error) {
+          window.sessionStorage.setItem("token", response.data.body.token);
           localStorage.setItem("my_token", response.data.body.token);
           localStorage.setItem("local_token", response.data.body.token);
           localStorage.setItem("userID", response.data.body.userId);
@@ -46,6 +61,7 @@ const LoginPage = () => {
           localStorage.setItem("sell_point_id", response.data.body.sell_point_id);
           localStorage.setItem("password", password);
           localStorage.setItem("username", username);
+          parallelAxiosChecker(data);
           setStart(true);
         } else {
           showError("Username or password is incorrect!");

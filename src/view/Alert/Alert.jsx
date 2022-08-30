@@ -9,6 +9,7 @@ export function showError(message) {
     closeOnClick: true,
     pauseOnHover: false,
     draggable: true,
+    limit:1,
     progress: undefined,
   });
 }
@@ -20,6 +21,7 @@ export function showWarning(message) {
     hideProgressBar: true,
     closeOnClick: true,
     pauseOnHover: false,
+    limit:1,
     draggable: true,
     progress: undefined,
   });
@@ -32,6 +34,7 @@ export function showSuccess(message) {
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: false,
+    limit:1,
     draggable: true,
     progress: undefined,
   });

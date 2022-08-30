@@ -14,9 +14,11 @@ import RinginCall from "./layout/ringin-call/RinginCall";
 import Sidebar from "./Sidebar";
 import { showError, showSuccess } from "./view/Alert/Alert.jsx";
 import useNetwork from "./hooks/useNetwork";
-import { createTheme, ThemeProvider } from "@mui/material";
+import {createTheme, Snackbar, ThemeProvider} from "@mui/material";
 import { AxiosInstance, LocalAxiosInstance } from "./api-interface/api/AxiosInstance.mjs";
 import {onMessageListener, requestForToken} from "./fcm/firebase";
+import {Alert} from "@mui/lab";
+import Button from "@mui/material/Button";
 
 export const AppContext = createContext();
 
@@ -89,6 +91,22 @@ function App() {
   const [fields, setFileds] = useState([]);
   const [permissions,setPermissions]=useState([]);
 
+  const [open, setOpen] = React.useState(false);
+  const [message,setMessage]=useState('Programma hoş geldiňiz');
+  const [severity,setSeverity]=useState('success');
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  useEffect(()=>{
+    setOpen(true);
+  },[message]);
+
   const callChecker = (call) => {
     return calls.filter((item, i) => item.call.uniqueId !== call.call.uniqueId);
   }
@@ -107,9 +125,11 @@ function App() {
       setCalls(newArray);
 
       try {
-        showSuccess(`${arg.call.callStateStr}, ${arg.call.callTypeStr} : ${arg.call.phNumber}, ${arg.customer[0].fullname}`)
+        setMessage(`${arg.call.callStateStr}, ${arg.call.callTypeStr} : ${arg.call.phNumber}, ${arg.customer[0].fullname}`)
+        setOpen(true);
       } catch (err) {
-        // showSuccess(`${arg.call.callStateStr}, ${arg.call.callTypeStr} : ${arg.call.phNumber}`)
+        setMessage(`${arg.call.callStateStr}, ${arg.call.callTypeStr} : ${arg.call.phNumber}`)
+        setOpen(true);
       }
     }
   });
@@ -138,7 +158,8 @@ function App() {
 
   onlineSocket.on("onInbox", (arg, callback) => {
     if (arg.unique_id == localStorage.getItem('unique_id')) {
-      showSuccess(`Täze hat geldi!`)
+      setMessage(`Täze hat geldi!`)
+      setOpen(true);
     }
   });
 
@@ -212,27 +233,42 @@ function App() {
 
     onMessageListener()
         .then((payload) => {
-          showSuccess(`${payload?.notification?.title} / ${payload?.notification?.body}`);
+          setMessage(`${payload?.notification?.title} / ${payload?.notification?.body}`);
+          setOpen(true);
         })
         .catch((err) => console.log('failed: ', err));
   }
 
 
   useEffect(() => {
-    getPermissions();
-    customers();
-    getCouriers();
-    getFields();
+    let my_token=localStorage.getItem('my_token');
+    let local_ip=localStorage.getItem('local_ip');
+    if(typeof local_ip === 'undefined' || local_ip == null || local_ip == ''){
+      localStorage.setItem('local_ip','localhost');
+    }
+    if(typeof my_token !== 'undefined' && my_token != null && my_token != ''){
+      getPermissions();
+      customers();
+      getCouriers();
+      getFields();
+    }
     fcm();
   }, []);
 
 
   useEffect(() => {
-    getPermissions();
-    customers();
-    getCouriers();
-    getFields();
+    let my_token=localStorage.getItem('my_token');
+    if(typeof my_token !== 'undefined' && my_token != null && my_token != ''){
+      getPermissions();
+      customers();
+      getCouriers();
+      getFields();
+    }
+    fcm();
+    localStorage.setItem('isOnline',online);
   }, [online]);
+
+
 
 
 
@@ -246,6 +282,14 @@ function App() {
         permissions:permissions
       }}>
         <ToastContainer />
+
+        <Snackbar
+            anchorOrigin={{vertical:'top',horizontal:'right'}}
+            open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
+            {message}
+          </Alert>
+        </Snackbar>
         <BrowserRouter>
           <Routes>
             <Route path="/login" index element={<LoginPage />} />
