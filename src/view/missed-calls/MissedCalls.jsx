@@ -25,6 +25,7 @@ import {useContext} from "react";
 import {AppContext} from "../../App";
 import {IosShare} from "@mui/icons-material";
 import {CSVLink} from "react-csv";
+import { convertTimeStampToDate } from "../../common/utils.mjs";
 
 const MissedCalls = () => {
   const [startDate, setStartDate] = useState("");
@@ -42,6 +43,10 @@ const MissedCalls = () => {
   const [list, setList] = useState([]);
 
   const {online} = useContext(AppContext);
+
+  useEffect(()=>{
+    setPage(1);
+  },[perPage]);
 
   const getData = async () => {
     const data = {
@@ -235,7 +240,7 @@ const MissedCalls = () => {
                       </div>
                       <div className="CallDate">
                         <Stack direction="row" spacing={12} mb={3}>
-                          <span>{item.call_date.split("T")[0]}</span>
+                          <span>{convertTimeStampToDate(item.call_date)}</span>
                           <span>{item.call_time}</span>
                         </Stack>
                         <Accordion>

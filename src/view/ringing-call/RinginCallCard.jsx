@@ -22,6 +22,7 @@ import {AppContext} from "../../App";
 import { downloadExcel } from "react-export-table-to-excel";
 import {IosShare} from "@mui/icons-material";
 import { CSVLink, CSVDownload } from "react-csv";
+import { convertTimeStampToDate } from "../../common/utils.mjs";
 
 const RinginCallCard = () => {
   const [startDate, setStartDate] = useState("");
@@ -38,6 +39,10 @@ const RinginCallCard = () => {
   const [list, setList] = useState([]);
 
   const {online} = useContext(AppContext);
+
+  useEffect(()=>{
+    setPage(1);
+  },[perPage]);
 
 
 
@@ -240,7 +245,7 @@ const RinginCallCard = () => {
                       </div>
                       <div className="callDate">
                         <Stack direction="row" spacing={12} mb={3}>
-                          <span>{item.call_date.split("T")[0]}</span>
+                          <span>{convertTimeStampToDate(item.call_date)}</span>
                           <span>{item.call_time}</span>
                         </Stack>
                         <Accordion>

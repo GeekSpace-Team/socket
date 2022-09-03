@@ -131,7 +131,7 @@ export default function SyncPage(props) {
 
     const getOrders = (vls, direction) => {
         let axios = direction === syncDirection.OFFLINE_TO_ONLINE ? LocalAxiosInstance : AxiosInstance;
-        axios.get(`/operator/get-all-orders`)
+        axios.get(`/operator/get-all-orders?sell_point_id=${localStorage.getItem('sell_point_id')}`)
             .then(result => {
                 if (!result.data.body.error) {
                     let k = [
@@ -214,6 +214,7 @@ export default function SyncPage(props) {
 
                             if (e.type === tables.customer_order_status_history) {
                                 setLabel("Online maglumatlar ýüklenýär...")
+                                console.log(vls.length);
                                 vls.forEach((e, i) => {
                                     if (typeof e.values !== 'undefined' && e.values != null && e.values.length > 0) {
                                         truncateTable(e.type)
@@ -232,6 +233,11 @@ export default function SyncPage(props) {
                                             .catch(err => {
                                                 showError(err);
                                             })
+                                    } else {
+                                        if (e.type === tables.customer_order_status_history) {
+                                            setIsOnline(false);
+                                            showSuccess();
+                                        }
                                     }
                                 })
                             }

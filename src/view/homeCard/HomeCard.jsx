@@ -2,8 +2,9 @@ import React, {useState} from "react";
 import "../../style/home/home.css";
 import {Button, Stack} from "@mui/material";
 import TextField from "@mui/material/TextField";
+import SyncPage from "../../layout/sync/SyncPage";
 
-const HomeCard = () => {
+const HomeCard = (props) => {
     const [ip, setIp] = useState(localStorage.getItem('local_ip'));
     const save=()=>{
         localStorage.setItem('local_ip',ip);
@@ -65,6 +66,12 @@ const HomeCard = () => {
                         value={ip} onChange={e=>setIp(e.target.value)}/>
 
                     <Button variant={"contained"} onClick={()=>save()}>Ýatda saklat</Button>
+
+                    {props.isSync?
+                        <SyncPage getData={()=>{props.setIsSync(false)}} open={true} autorun={true}/>
+                        :
+                        null
+                    }
 
                 </Stack>
             </Stack>

@@ -354,71 +354,138 @@ const UpdateOrder = (props) => {
     }
 
     const addAddressHistory=(item)=>{
-        let temp=[
-            {
-                res: item,
-                operator: localStorage.getItem("fullname"),
-                courier: null
-            },
-            ...address_history
-        ]
-        setAddress_history(temp);
+        try{
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                },
+                ...address_history
+            ];
+            setAddress_history(temp);
+        } catch(err){
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                }
+            ];
+            setAddress_history(temp);
+        }
+        
     }
 
     const addLocationHistory=(item)=>{
-        let temp=[
-            {
-                res: item,
-                operator: localStorage.getItem("fullname"),
-                courier: null
-            },
-            ...location_history
-        ]
-        setLocation_history(temp);
+        try{
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                },
+                ...location_history
+            ]
+            setLocation_history(temp);
+        } catch(err){
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                }
+            ]
+            setLocation_history(temp);
+        }
     }
     const addDateHistory=(item)=>{
-        let temp=[
-            {
-                res: item,
-                operator: localStorage.getItem("fullname"),
-                courier: null
-            },
-            ...date_history
-        ]
-        setDate_history(temp);
+        try{
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                },
+                ...date_history
+            ]
+            setDate_history(temp);
+        } catch(err){
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                }
+            ]
+            setDate_history(temp);
+        }
     }
     const addPriceHistory=(item)=>{
-        let temp=[
-            {
-                res: item,
-                operator: localStorage.getItem("fullname"),
-                courier: null
-            },
-            ...delivery_price_history
-        ]
-        setDelivery_price_history(temp);
+        try{
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                },
+                ...delivery_price_history
+            ]
+            setDelivery_price_history(temp);
+        } catch(err){
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                }
+            ]
+            setDelivery_price_history(temp);
+        }
     }
     const addCourierHistory=(item,name)=>{
-        let temp=[
-            {
-                res: item,
-                operator: localStorage.getItem("fullname"),
-                courier: name
-            },
-            ...courier_history
-        ]
-        setCourier_history(temp);
+        try{
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: name
+                },
+                ...courier_history
+            ]
+            setCourier_history(temp);
+        } catch(err){
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: name
+                }
+            ]
+            setCourier_history(temp);
+        }
     }
     const addStatusHistory=(item)=>{
-        let temp=[
-            ...status_history,
-            {
-                res: item,
-                operator: localStorage.getItem("fullname"),
-                courier: null
-            }
-        ]
-        setStatus_history(temp);
+        try{
+            let temp=[
+                ...status_history,
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                }
+            ]
+            setStatus_history(temp);
+        } catch(err){
+            let temp=[
+                {
+                    res: item,
+                    operator: localStorage.getItem("fullname"),
+                    courier: null
+                }
+            ]
+            setStatus_history(temp);
+        }
     }
 
     const getDesc=(list)=>{
@@ -1029,7 +1096,7 @@ const UpdateOrder = (props) => {
                         <label>Eltip bermek bahasy:</label>
                         {
                             checkList(delivery_price_history)?
-                            delivery_price_history.map((e, i) => {
+                            getDesc(delivery_price_history).map((e, i) => {
                                 return (
                                     <Stack direction="column" spacing={1.5} mb={2}
                                            key={`delivery_price_key${i}`}
@@ -1129,7 +1196,7 @@ const UpdateOrder = (props) => {
                         <label>Status:</label>
                         {
                             checkList(status_history)?
-                            status_history.map((e, i) => {
+                            getDesc(status_history).map((e, i) => {
                                 return (
                                     <Stack direction="column" spacing={1.5} mb={2}
                                            key={`courier_key${i}`}

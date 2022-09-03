@@ -172,6 +172,7 @@ const Sidebar = (props) => {
     let axios=online?AxiosInstance:LocalAxiosInstance;
     axios.post('/operator/auth-v2/log-out')
         .then(result=>{
+          window.sessionStorage.setItem("token",'');
           window.location.href="/login";
         })
         .catch(err=>{

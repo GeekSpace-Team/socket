@@ -23,7 +23,7 @@ const AxiosInstance = axios.create({
   timeout: 100000,
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${onlineChecker()?localStorage.getItem("my_token"):localStorage.getItem('parallel_token')}`,
+    Authorization: `Bearer ${localStorage.getItem("my_token")}`,
   },
 });
 
@@ -32,7 +32,7 @@ const LocalAxiosInstance = axios.create({
   timeout: 100000,
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${onlineChecker()?localStorage.getItem("my_token"):localStorage.getItem('parallel_token')}`,
+    Authorization: `Bearer ${localStorage.getItem('parallel_token')}`,
   },
 });
 

@@ -19,6 +19,7 @@ import { AxiosInstance, LocalAxiosInstance } from "./api-interface/api/AxiosInst
 import {onMessageListener, requestForToken} from "./fcm/firebase";
 import {Alert} from "@mui/lab";
 import Button from "@mui/material/Button";
+import {useLocation} from "react-router-dom";
 
 export const AppContext = createContext();
 
@@ -134,6 +135,8 @@ function App() {
     }
   });
 
+ 
+
   // useEffect(() => {
   //   window.addEventListener('beforeunload', alertUser)
   //   window.addEventListener('unload', handleTabClosing)
@@ -222,29 +225,19 @@ function App() {
         });
   }
 
-  const fcm=()=>{
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        // navigator.serviceWorker.register("/flutter_service_worker.js");
-        navigator.serviceWorker.register("/firebase-messaging-sw.js");
-      });
-    }
-    requestForToken();
 
-    onMessageListener()
-        .then((payload) => {
-          setMessage(`${payload?.notification?.title} / ${payload?.notification?.body}`);
-          setOpen(true);
-        })
-        .catch((err) => console.log('failed: ', err));
-  }
 
 
   useEffect(() => {
     let my_token=localStorage.getItem('my_token');
     let local_ip=localStorage.getItem('local_ip');
     if(typeof local_ip === 'undefined' || local_ip == null || local_ip == ''){
-      localStorage.setItem('local_ip','localhost');
+      const enteredName = prompt('IP salgysyny giriziň!');
+      if(typeof enteredName === 'undefined' || enteredName == null || enteredName == ''){
+        localStorage.setItem('local_ip','localhost');
+      } else {
+        localStorage.setItem('local_ip',enteredName);
+      }
     }
     if(typeof my_token !== 'undefined' && my_token != null && my_token != ''){
       getPermissions();
@@ -252,7 +245,6 @@ function App() {
       getCouriers();
       getFields();
     }
-    fcm();
   }, []);
 
 
@@ -264,7 +256,6 @@ function App() {
       getCouriers();
       getFields();
     }
-    fcm();
     localStorage.setItem('isOnline',online);
   }, [online]);
 
@@ -292,7 +283,7 @@ function App() {
         </Snackbar>
         <BrowserRouter>
           <Routes>
-            <Route path="/login" index element={<LoginPage />} />
+            <Route path="/login" index element={<LoginPage setMessage={setMessage} setOpen={setOpen}/>} />
             <Route path="/" element={<Sidebar unreadCount={unreadCount} setUnreadCount={setUnreadCount} setOnline={setOnline} />}>
               <Route index element={<Home />} />
               <Route path="/accept-call" element={<AcceptCall setCalls={setCalls} calls={calls} />} />

@@ -105,9 +105,13 @@ export default function CourierOrders(props) {
         return array.sort(function compare(a, b) {
             var dateA = new Date(a);
             var dateB = new Date(b);
-            return dateA - dateB;
+            return dateB - dateA;
           });
     }
+
+    // React.useEffect(()=>{
+    //     console.log(getListByDate(ee))
+    // },[list]);
 
     return (
         <div>
@@ -145,14 +149,14 @@ export default function CourierOrders(props) {
                             ulist.length<=0?
                                 <Empty/>
                                 :
-                            ulist.map((ee,ii)=>{
+                                orderByDesc(ulist).map((ee,ii)=>{
                                 return(
-                                    <div key={`steep_key${ii}`} style={{marginTop:'12px'}}>
-                                        <Typography><b>{getLabel(ee)}</b></Typography>
+                                    <div key={`steep_key${ii}`} style={{marginTop:'40px'}}>
+                                        <Typography variant='h5'><b>{getLabel(ee)}</b></Typography>
                                         <br/>
-                                        <Stepper activeStep={list!=null && list.length>0?list.length-1:0}>
+                                        <Stepper activeStep={list!=null && list.length>0?list.length-1:0} orientation={'vertical'}>
                                             {
-                                                orderByDesc(getListByDate(ee)).map((e,i)=>{
+                                                getListByDate(ee).map((e,i)=>{
                                                     return(
                                                         <Step key={`stepper_key_${i}`}>
                                                             <StepLabel>

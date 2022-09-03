@@ -87,7 +87,7 @@ const PdfOrder = (props) => {
                     </Toolbar>
                 </AppBar>
                 <div>
-                    <PdfChild componentRef={componentRef} courier={props.courier} item={props.item} address={props.address}/>
+                    <PdfChild componentRef={componentRef} courier={props.courier} item={props.item} address={props.address} delivery_price={props.delivery_price}/>
                 </div>
             </Dialog>
         </div>

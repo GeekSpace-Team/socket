@@ -14,6 +14,7 @@ import {Edit} from "@mui/icons-material";
 import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
 import {showError, showSuccess} from "../Alert/Alert";
 import {AppContext} from "../../App";
+import { ToastContainer } from "react-toastify";
 
 const style = {
   position: "absolute",
@@ -55,13 +56,16 @@ const PlaceChange = (props) => {
           .then(response=>{
               if(!response.data.error){
 
-                  props.addAddressHistory(response.data.body);
+                  
                   if(latitude!=='' && longitude!==''){
                       updateLocation();
                   } else {
                       showSuccess('Üstünlikli üýtgedildi!');
                       props.getData();
                   }
+                  
+                  props.addAddressHistory(response.data.body);
+                  
               } else {
                   showError('Ýalňyşlyk ýüze çykdy!');
               }
@@ -96,6 +100,7 @@ const PlaceChange = (props) => {
   }
   return (
     <div>
+      <ToastContainer/>
       <Stack spacing={2} direction="row" alignItems={"center"}>
           <Button startIcon={<Edit/>} onClick={handleOpen} variant={'contained'} color={'secondary'}>
               Üýtget

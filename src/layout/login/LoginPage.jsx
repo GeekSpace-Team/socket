@@ -8,8 +8,10 @@ import { showError } from "../../view/Alert/Alert";
 import { ToastContainer } from "react-toastify";
 import {AppContext} from "../../App";
 import SyncPage from "../sync/SyncPage";
+import {useLocation} from "react-router-dom";
+import { onMessageListener, requestForToken } from "../../fcm/firebase";
 
-const LoginPage = () => {
+const LoginPage = (props) => {
   // const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -18,20 +20,52 @@ const LoginPage = () => {
 
 
   const getData=()=>{
-    window.location.href = "/";
+    window.location.href = "/?sync=18112000";
   }
 
-  const parallelAxiosChecker=(data)=>{
+  const fcm=()=>{
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        // navigator.serviceWorker.register("/flutter_service_worker.js");
+        navigator.serviceWorker.register("/firebase-messaging-sw.js");
+      });
+    }
+    requestForToken();
+
+    onMessageListener()
+        .then((payload) => {
+          props.setMessage(`${payload?.notification?.title} / ${payload?.notification?.body}`);
+          props.setOpen(true);
+        })
+        .catch((err) => console.log('failed: ', err));
+  }
+
+  let location = useLocation();
+
+  React.useEffect(() => {
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1"){
+      fcm();
+    }
+      
+  }, [location]);
+
+  const parallelAxiosChecker=(data,tkn)=>{
     let parallelAxios=online?LocalAxiosInstance:AxiosInstance;
     parallelAxios.post("/operator/auth/sign-in", data)
       .then((response) => {
         // setIsLoading(false);
         if (!response.data.error) {
           localStorage.setItem("parallel_token", response.data.body.token);
+          getData();
         } else {
+          localStorage.setItem("parallel_token", tkn);
+          getData();
+
         }
       })
       .catch((err) => {
+        localStorage.setItem("parallel_token", tkn);
+        getData();
       });
   }
 
@@ -61,8 +95,8 @@ const LoginPage = () => {
           localStorage.setItem("sell_point_id", response.data.body.sell_point_id);
           localStorage.setItem("password", password);
           localStorage.setItem("username", username);
-          parallelAxiosChecker(data);
-          setStart(true);
+          parallelAxiosChecker(data,response.data.body.token);
+          
         } else {
           showError("Username or password is incorrect!");
         }

@@ -128,7 +128,9 @@ const PdfChild = (props) => {
 
                         <tr>
                             <td colSpan={2}><b>Eltip beren:</b></td>
-                            <td colSpan={7}>{props.courier}</td>
+                            <td colSpan={3}>{props.courier}</td>
+                            <td colSpan={2}><b>Eltip bermek bahasy:</b></td>
+                            <td colSpan={2}>{`${props.delivery_price} TMT`}</td>
                         </tr>
 
                         <tr>

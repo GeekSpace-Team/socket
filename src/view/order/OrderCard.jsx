@@ -47,6 +47,9 @@ const OrderCard = () => {
   const [search,setSearch]=useState(typeof get_unique_id !== 'undefined' && get_unique_id != null && get_unique_id !== ''?`${get_unique_id}`:'');
   
 
+  useEffect(()=>{
+    setPage(1);
+  },[perPage]);
 
   const getData = () => {
     const data = {
@@ -389,14 +392,14 @@ const OrderCard = () => {
                     <div className="OCFTfirstRow">
                       <label>Eltip bermek bahasy : </label>
                       <label>
-                        {getDeliveryPrice(item.delivery_price_history)}
+                        {getDeliveryPrice(getDesc(item.delivery_price_history))}
                         TMT
                       </label>
                     </div>
 
                     <div className="OCFTsecondRow">
                       <label>Jemi bahasy :</label>
-                      <label>{getTotalPrice(item.products)+getDeliveryPrice(item.delivery_price_history)} TMT</label>
+                      <label>{getTotalPrice(item.products)+getDeliveryPrice(getDesc(item.delivery_price_history))} TMT</label>
                     </div>
                     <div className="OCFTthirdRow">
                       <label>Eltip beriji : </label>
@@ -443,7 +446,7 @@ const OrderCard = () => {
                     spacing={{ xs: 1, sm: 2, md: 5 }}
                     mt={2}
                   >
-                  <PdfOrder item={item} courier={getCourierName(item) == null ? '' : getCourierName(item)} address={getAddress(getDesc(item.address_history))}/>
+                  <PdfOrder item={item} courier={getCourierName(item) == null ? '' : getCourierName(item)} address={getAddress(getDesc(item.address_history))} delivery_price={getDeliveryPrice(getDesc(item.delivery_price_history))}/>
                     {
                       checkPermission('orders',permissions).edit?
                           <UpdateOrder getData={getData} setPage={setPage} item={item}/>
