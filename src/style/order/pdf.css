@@ -1,19 +1,22 @@
-.table-pdf{
-    border-style: none;
-}
-
-.table-pdf tr{
-    border-style: solid;
-    border-color: black;
+.table-pdf tr {
     margin: 0;
 }
-.table-pdf tr td{
-    padding: 6px;
+
+table,
+th,
+td {
+    border: 1px solid black;
+    border-collapse: collapse;
 }
 
-.table-pdf tr td input{
+.table-pdf tr td {
+    padding: 4px;
+    font-size: 12px;
+}
+
+.table-pdf tr td input {
     outline: none;
     border: none;
-    font-size: 18px;
+    font-size: 12px;
     width: 100%;
 }

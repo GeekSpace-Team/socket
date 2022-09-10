@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,10 +6,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import {convertTimeStampToDate} from "../../common/utils.mjs";
+import { convertTimeStampToDate } from "../../common/utils.mjs";
 import '../../style/order/pdf.css'
 import QRCode from "react-qr-code";
-import {Box} from "@mui/system";
+import { Box } from "@mui/system";
 
 function createData(
     name: string,
@@ -18,7 +18,7 @@ function createData(
     carbs: number,
     protein: number,
 ) {
-    return {name, calories, fat, carbs, protein};
+    return { name, calories, fat, carbs, protein };
 }
 
 const lightTheme = createTheme({
@@ -29,34 +29,34 @@ const lightTheme = createTheme({
 
 const PdfChild = (props) => {
 
-    const [store,setStore]=useState(typeof localStorage.getItem('store_name') === 'undefined'?'Nokat adyny giriziň':localStorage.getItem('store_name'));
+    const [store, setStore] = useState(typeof localStorage.getItem('store_name') === 'undefined' ? 'Nokat adyny giriziň' : localStorage.getItem('store_name'));
 
-    useEffect(()=>{
-        localStorage.setItem('store_name',store);
-    },[store]);
+    useEffect(() => {
+        localStorage.setItem('store_name', store);
+    }, [store]);
 
-    const checkList=(list)=>{
-        try{
-            let t=list[0];
+    const checkList = (list) => {
+        try {
+            let t = list[0];
             return true;
-        } catch (err){
+        } catch (err) {
             return false;
         }
     }
 
-    const calculatePrice=(element)=>{
-        try{
-            let count=1;
-            if(typeof element.product_count !== 'undefined' && element.product_count !=null && element.product_count!='' && element.product_count>0){
-                count=element.product_count;
+    const calculatePrice = (element) => {
+        try {
+            let count = 1;
+            if (typeof element.product_count !== 'undefined' && element.product_count != null && element.product_count != '' && element.product_count > 0) {
+                count = element.product_count;
             }
-            let sum = (element.product_debt_price + element.product_cash_price)*count;
+            let sum = (element.product_debt_price + element.product_cash_price) * count;
             let t = 0;
             if (element.product_discount != null && element.product_discount != '') {
                 t = (element.product_discount / 100) * sum;
             }
             return sum - t;
-        } catch (err){
+        } catch (err) {
             return 0;
         }
     }
@@ -64,15 +64,15 @@ const PdfChild = (props) => {
     return (
         <ThemeProvider theme={lightTheme}>
             <center>
-                <div style={{display:'inline-block',padding:'22px'}} ref={props.componentRef}>
+                <div style={{ display: 'inline-block', padding: '22px' }} ref={props.componentRef}>
                     <table border={1} className={'table-pdf'}>
                         <tr>
-                            <td colSpan={6}><input type={'text'} value={store} onChange={e=>setStore(e.target.value)}/></td>
+                            <td colSpan={6}><input type={'text'} value={store} onChange={e => setStore(e.target.value)} /></td>
                             <td colSpan={2}>{convertTimeStampToDate(new Date())}</td>
                             <td colSpan={1}>
-                                    <div style={{ background: 'white', padding: '16px' }}>
-                                        <QRCode value={props.item.unique_id} level={'L'} size={'80'}/>
-                                    </div>
+                                <div style={{ background: 'white', padding: '1px' }}>
+                                    <QRCode value={props.item.unique_id} level={'L'} size={'40'} />
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -87,9 +87,9 @@ const PdfChild = (props) => {
                             <td><b>Sany</b></td>
                         </tr>
                         {
-                            checkList(props.item.products)?
-                                props.item.products.map((e,i)=>{
-                                    return(
+                            checkList(props.item.products) ?
+                                props.item.products.map((e, i) => {
+                                    return (
                                         <tr key={`table_row_${i}`}>
                                             <td>{e.product_brand}</td>
                                             <td>{e.product_model}</td>
@@ -98,7 +98,7 @@ const PdfChild = (props) => {
                                             <td>{e.product_color}</td>
                                             <td>{e.product_debt_price}</td>
                                             <td>{e.product_cash_price}</td>
-                                            <td>{calculatePrice(e)}{ `TMT / ${e.product_discount}% arzanladyş`}</td>
+                                            <td>{calculatePrice(e)}{`TMT / ${e.product_discount}% arzanladyş`}</td>
                                             <td>{e.product_count}</td>
                                         </tr>
                                     )

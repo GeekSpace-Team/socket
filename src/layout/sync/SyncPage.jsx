@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useContext, useEffect, useState} from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
@@ -8,22 +8,22 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
-import {Box} from "@mui/system";
+import { Box } from "@mui/system";
 import SyncIcon from '@mui/icons-material/Sync';
-import {Stack} from "@mui/material";
-import {Player} from "@lottiefiles/react-lottie-player";
+import { Stack } from "@mui/material";
+import { Player } from "@lottiefiles/react-lottie-player";
 import LinearProgress from '@mui/material/LinearProgress';
-import {AppContext} from "../../App";
-import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
-import {syncDirection, tables} from "../../common/constant.mjs";
+import { AppContext } from "../../App";
+import { AxiosInstance, LocalAxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import { syncDirection, tables } from "../../common/constant.mjs";
 
 function LinearProgressWithLabel(props) {
     return (
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-            <Box sx={{width: '100%', mr: 1}}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ width: '100%', mr: 1 }}>
                 <LinearProgress variant="determinate" {...props} />
             </Box>
-            <Box sx={{minWidth: 35}}>
+            <Box sx={{ minWidth: 35 }}>
                 <Typography variant="body2" color="text.secondary">{`${Math.round(
                     props.value,
                 )}%`}</Typography>
@@ -54,7 +54,7 @@ export default function SyncPage(props) {
 
     // Business logic
 
-    const {online} = useContext(AppContext);
+    const { online } = useContext(AppContext);
 
     const [data, setData] = useState([]);
     const [isOnline, setIsOnline] = useState(false);
@@ -162,6 +162,10 @@ export default function SyncPage(props) {
                         {
                             values: result.data.body.products,
                             type: tables.customer_order_product
+                        },
+                        {
+                            values: result.data.body.phone_calls,
+                            type: tables.phone_call
                         },
                         {
                             values: result.data.body.product_status,
@@ -422,7 +426,7 @@ export default function SyncPage(props) {
 
     return (
         <div>
-            <Button variant="outlined" sx={{mr:2}} startIcon={<SyncIcon/>} onClick={handleClickOpen}>
+            <Button variant="outlined" sx={{ mr: 2 }} startIcon={<SyncIcon />} onClick={handleClickOpen}>
                 Sync
             </Button>
             <Dialog
@@ -431,7 +435,7 @@ export default function SyncPage(props) {
                 onClose={handleClose}
                 TransitionComponent={Transition}
             >
-                <AppBar sx={{position: 'relative'}}>
+                <AppBar sx={{ position: 'relative' }}>
                     <Toolbar>
                         <IconButton
                             edge="start"
@@ -440,9 +444,9 @@ export default function SyncPage(props) {
                             onClick={handleClose}
                             aria-label="close"
                         >
-                            <CloseIcon/>
+                            <CloseIcon />
                         </IconButton>
-                        <Typography sx={{ml: 2, flex: 1}} variant="h6" component="div">
+                        <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                             Maglumatlary ugratmak / almak
                         </Typography>
                         <Button autoFocus color="inherit" disabled={disabled} onClick={handleClose}>
@@ -456,14 +460,14 @@ export default function SyncPage(props) {
                             autoplay
                             loop
                             src={error ? "/error.json" : running ? "/sync-running.json" : "/sync-start.json"}
-                            style={{height: '200px', width: '200px', marginTop: '100px', marginBottom: '40px'}}
+                            style={{ height: '200px', width: '200px', marginTop: '100px', marginBottom: '40px' }}
                         >
                         </Player>
-                        <Typography sx={{mb: 2}}>{label}</Typography>
+                        <Typography sx={{ mb: 2 }}>{label}</Typography>
                         {
                             running && !error ?
-                                <Box sx={{width: '50%'}}>
-                                    <LinearProgress color="primary"/>
+                                <Box sx={{ width: '50%' }}>
+                                    <LinearProgress color="primary" />
                                 </Box>
                                 :
                                 null
@@ -471,8 +475,8 @@ export default function SyncPage(props) {
 
                         {
                             running ? null :
-                                <Button startIcon={<SyncIcon/>} onClick={() => handleStart()} variant={'contained'}
-                                        fullWidth={false}>
+                                <Button startIcon={<SyncIcon />} onClick={() => handleStart()} variant={'contained'}
+                                    fullWidth={false}>
                                     Ugratmak
                                 </Button>
                         }

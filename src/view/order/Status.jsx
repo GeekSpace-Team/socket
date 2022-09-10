@@ -1,10 +1,10 @@
-import React, {useContext, useState} from "react";
-import {Button, MenuItem, Modal, Select, Stack,} from "@mui/material";
-import {Box} from "@mui/system";
-import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
-import {showError, showSuccess} from "../Alert/Alert";
-import {Edit} from "@mui/icons-material";
-import {AppContext} from "../../App";
+import React, { useContext, useState } from "react";
+import { Button, MenuItem, Modal, Select, Stack, } from "@mui/material";
+import { Box } from "@mui/system";
+import { AxiosInstance, LocalAxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import { showError, showSuccess } from "../Alert/Alert";
+import { Edit } from "@mui/icons-material";
+import { AppContext } from "../../App";
 
 const style = {
     position: "absolute",
@@ -25,7 +25,7 @@ const Status = (props) => {
     const handleClose = () => setOpen(false);
     const [status, setStatus] = useState('');
     const [reason, setReason] = useState('');
-    const {online}=useContext(AppContext);
+    const { online } = useContext(AppContext);
     const update = () => {
         let data = {
             order_unique_id: props.order_unique_id,
@@ -33,7 +33,7 @@ const Status = (props) => {
             reason: reason
         };
 
-        let axios=online?AxiosInstance:LocalAxiosInstance;
+        let axios = online ? AxiosInstance : LocalAxiosInstance;
         axios.put('/operator/change-order-status', data)
             .then(response => {
                 if (!response.data.error) {
@@ -51,7 +51,7 @@ const Status = (props) => {
     return (
         <div>
             <Stack spacing={2} direction="row" alignItems={"center"}>
-                <Button startIcon={<Edit/>} onClick={handleOpen} variant={'contained'} color={'secondary'}>
+                <Button startIcon={<Edit />} onClick={handleOpen} variant={'contained'} color={'secondary'}>
                     Üýtget
                 </Button>
             </Stack>
@@ -63,7 +63,7 @@ const Status = (props) => {
             >
                 <Box sx={style}>
                     <Stack textAlign={"center"}>
-                        <label style={{fontSize: "18px", fontWeight: "600"}}>
+                        <label style={{ fontSize: "18px", fontWeight: "600" }}>
                             Statusy
                         </label>
                     </Stack>
@@ -103,7 +103,7 @@ const Status = (props) => {
                     </Stack>
                     <Stack direction={"column"}>
                         <Stack direction={"row"}>
-                            <label style={{fontWeight: "600"}}>Sebäbi :</label>
+                            <label style={{ fontWeight: "600" }}>Sebäbi :</label>
                             <input
                                 type="text"
                                 value={reason}
@@ -115,7 +115,7 @@ const Status = (props) => {
                                 }}
                             />
                         </Stack>
-                        <hr/>
+                        <hr />
                     </Stack>
                     <Stack direction="row" spacing={2} justifyContent={"flex-end"} mt={2}>
                         <Button

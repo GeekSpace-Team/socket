@@ -23,7 +23,7 @@ const style = {
 };
 const AddCustomerModal = (props) => {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  
   const handleClose = () => setOpen(false);
   const [fullname, setFullname] = useState("");
   const [phone_number, setPhone_number] = useState(typeof props.phone_number!== 'undefined' && props.phone_number != null ? props.phone_number : '');
@@ -45,6 +45,10 @@ const AddCustomerModal = (props) => {
       interested_product_color: "",
     },
   ]);
+  const handleOpen = () => {
+    setPhone_number(typeof props.phone_number!== 'undefined' && props.phone_number != null ? props.phone_number : '');
+    setOpen(true);
+  }
   const {online}=useContext(AppContext);
   const clearCustomer = () => {
     setFullname("");
@@ -87,6 +91,23 @@ const AddCustomerModal = (props) => {
     getFields();
   }, []);
 
+  // const addParallelData = async (data) => {
+  //   let axios=online?LocalAxiosInstance:AxiosInstance;
+  //   axios.post("/operator/add-customer", data)
+  //     .then((response) => {
+  //       if (!response.data.error) {
+  //         handleClose();
+  //         props.getData(1);
+  //         showSuccess("Musderi ustunlikli gosuldy !");
+  //         clearCustomer();
+  //       }
+        
+  //     })
+  //     .catch((err) => {
+  //       showError(err + "");
+  //     });
+  // };
+
   const addData = async () => {
     const data = {
       fullname: fullname,
@@ -107,11 +128,11 @@ const AddCustomerModal = (props) => {
     axios.post("/operator/add-customer", data)
       .then((response) => {
         if (!response.data.error) {
+          handleClose();
+          props.getData(1);
+          showSuccess("Musderi ustunlikli gosuldy !");
+          clearCustomer();
         }
-        handleClose();
-        props.getData(1);
-        showSuccess("Musderi ustunlikli gosuldy !");
-        clearCustomer();
       })
       .catch((err) => {
         showError(err + "");

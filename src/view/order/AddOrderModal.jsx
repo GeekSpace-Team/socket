@@ -14,7 +14,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
+import { AxiosInstance, LocalAxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
 import { showError, showSuccess } from "../Alert/Alert.jsx";
 import Map from "./MapLocation.jsx";
 import MapLocation from "./MapLocation.jsx";
@@ -37,7 +37,7 @@ const style = {
 
 const AddOrderModal = (props) => {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+
   const handleClose = () => setOpen(false);
   const [is_express, setIs_express] = useState(false);
   const [additional_information, setAdditional_information] = useState("");
@@ -50,14 +50,14 @@ const AddOrderModal = (props) => {
   const [delivery_price, setDelivery_price] = useState("0");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const {allCustomer} = useContext(AppContext);
+  const { allCustomer } = useContext(AppContext);
   const [status, setStatus] = useState("");
   const [courier, setCourier] = useState("");
-  const {couriers} = useContext(AppContext);
+  const { couriers } = useContext(AppContext);
   const [value, setValue] = useState("");
   const [home, setHome] = useState("");
   const [work, setWork] = useState("");
-  const {online}=useContext(AppContext);
+  const { online } = useContext(AppContext);
   const [products, setProducts] = useState([
     {
       product_name: "",
@@ -73,17 +73,24 @@ const AddOrderModal = (props) => {
     },
   ]);
 
-  const checkUserUnqiueId=()=>{
-    try{
-      let temp=allCustomer.filter((item,i)=>item.unique_id==props.user_unique_id);
+
+  const checkUserUnqiueId = () => {
+    try {
+      let temp = allCustomer.filter((item, i) => item.unique_id == props.user_unique_id);
       setValue(temp[0]);
-    } catch (err){
+    } catch (err) {
     }
   }
 
-  useEffect(()=>{
+  const handleOpen = () => {
     checkUserUnqiueId();
-  },[]);
+    setOpen(true);
+  }
+
+
+  useEffect(() => {
+    checkUserUnqiueId();
+  }, []);
 
   const hoveredstyle = {
     cursor: "initial",
@@ -102,37 +109,37 @@ const AddOrderModal = (props) => {
     setAddress(saddress);
   }, [saddress]);
 
-  const clearData=()=>{
-      setIs_express(false);
-      setAdditional_information("");
-      setCustomer_unique_id("");
-      setAddress("");
-      setSAddress("");
-      setCourier_unique_id("");
-      setOrder_date("");
-      setOrder_time("");
-      setDelivery_price("0");
-      setLatitude("");
-      setLongitude("");
-      setStatus("");
-      setCourier("");
-      setValue("");
-      setHome("");
-      setWork("");
-      setProducts([
-        {
-          product_name: "",
-          product_brand: "",
-          product_model: "",
-          product_artikul_code: "",
-          product_debt_price: 0,
-          product_cash_price: 0,
-          product_discount: 0,
-          product_size: "",
-          product_color: "",
-          product_count: 1,
-        },
-      ]);
+  const clearData = () => {
+    setIs_express(false);
+    setAdditional_information("");
+    setCustomer_unique_id("");
+    setAddress("");
+    setSAddress("");
+    setCourier_unique_id("");
+    setOrder_date("");
+    setOrder_time("");
+    setDelivery_price("0");
+    setLatitude("");
+    setLongitude("");
+    setStatus("");
+    setCourier("");
+    setValue("");
+    setHome("");
+    setWork("");
+    setProducts([
+      {
+        product_name: "",
+        product_brand: "",
+        product_model: "",
+        product_artikul_code: "",
+        product_debt_price: 0,
+        product_cash_price: 0,
+        product_discount: 0,
+        product_size: "",
+        product_color: "",
+        product_count: 1,
+      },
+    ]);
   }
 
   const addData = async () => {
@@ -150,7 +157,7 @@ const AddOrderModal = (props) => {
       status: status,
       products: products,
     };
-    let axios=online?AxiosInstance:LocalAxiosInstance;
+    let axios = online ? AxiosInstance : LocalAxiosInstance;
     axios.post("/operator/add-order", data)
       .then((response) => {
         if (!response.data.error) {
@@ -314,11 +321,11 @@ const AddOrderModal = (props) => {
     setProducts(temp);
   }
 
-  useEffect(()=>{
-    if(courier != null && courier!=''){
+  useEffect(() => {
+    if (courier != null && courier != '') {
       setStatus('courier-pending');
     }
-  },[courier]);
+  }, [courier]);
 
   return (
     <div>
@@ -689,7 +696,7 @@ const AddOrderModal = (props) => {
                   onChange={(e) => setStatus(e.target.value)}
                 >
                   <MenuItem value={"none"}>Täze sargyt</MenuItem>
-                  <MenuItem value={"pending"}>Garaşaryna</MenuItem>
+                  <MenuItem value={"pending"}>Garaşylýar</MenuItem>
                   <MenuItem value={"courier-pending"}>
                     Eltip berijä ugradyldy
                   </MenuItem>
@@ -705,7 +712,7 @@ const AddOrderModal = (props) => {
               </Stack>
 
               <Stack width="100%">
-                <FormControlLabel control={<Checkbox checked={is_express} onChange={e=>setIs_express(e.target.checked)} />} label="Çalt eltip bermek hyzmaty barmy" />
+                <FormControlLabel control={<Checkbox checked={is_express} onChange={e => setIs_express(e.target.checked)} />} label="Çalt eltip bermek hyzmaty barmy" />
               </Stack>
             </Stack>
             <Stack
@@ -716,7 +723,7 @@ const AddOrderModal = (props) => {
             >
               <Button
                 variant="outlined"
-                onClick={()=>clearData()}
+                onClick={() => clearData()}
                 style={{
                   borderRadius: "16px",
                   textTransform: "none",
