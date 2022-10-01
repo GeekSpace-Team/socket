@@ -1,28 +1,28 @@
-import React, { useEffect, useState, useContext  } from "react";
-import {Button, Grid, Stack} from "@mui/material";
+import "../../style/ringing-call/ringing-call.css";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import CallInfoModal from "../missed-calls/CallInfoModal";
+import CallMadeIcon from "@mui/icons-material/CallMade";
+import Empty from "../../common/Empty";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Loading from "../../common/Loading";
 import Pagination from "@mui/material/Pagination";
-import {AxiosInstance, LocalAxiosInstance} from "../../api-interface/api/AxiosInstance.mjs";
-import { showError } from "../Alert/Alert";
+import PhoneCallbackIcon from "@mui/icons-material/PhoneCallback";
+import React, { useContext, useEffect, useState } from "react";
 import RingingCallFilter from "./RingingCallFilter";
 import RingingCallSort from "./RingingCallSort";
-import PhoneCallbackIcon from "@mui/icons-material/PhoneCallback";
-import CallMadeIcon from "@mui/icons-material/CallMade";
-import RingingPerPage from "./RingingPerPage";
-import "../../style/ringing-call/ringing-call.css";
 import RingingExport from "./RingingExport";
-import Empty from "../../common/Empty";
-import Loading from "../../common/Loading";
-import {AppContext} from "../../App";
+import RingingPerPage from "./RingingPerPage";
+import Typography from "@mui/material/Typography";
+import { CSVDownload, CSVLink } from "react-csv";
 import { downloadExcel } from "react-export-table-to-excel";
-import {IosShare} from "@mui/icons-material";
-import { CSVLink, CSVDownload } from "react-csv";
-import { convertTimeStampToDate } from "../../common/utils.mjs";
+import { AppContext } from "../../App";
+import { AxiosInstance, LocalAxiosInstance } from "../../api-interface/api/AxiosInstance.mjs";
+import { convertTimeStampToDate, isOperator } from "../../common/utils.mjs";
+import { showError } from "../Alert/Alert";
+import { IosShare } from "@mui/icons-material";
+import { Button, Grid, Stack } from "@mui/material";
 
 const RinginCallCard = () => {
   const [startDate, setStartDate] = useState("");
@@ -38,11 +38,11 @@ const RinginCallCard = () => {
 
   const [list, setList] = useState([]);
 
-  const {online} = useContext(AppContext);
+  const { online } = useContext(AppContext);
 
-  useEffect(()=>{
+  useEffect(() => {
     setPage(1);
-  },[perPage]);
+  }, [perPage]);
 
 
 
@@ -57,7 +57,8 @@ const RinginCallCard = () => {
       sortBy: parseInt(sortBy),
     };
     // console.log(data);
-    await LocalAxiosInstance.post("/operator/get-accepted-calls", data)
+    const axios = isOperator() ? LocalAxiosInstance : AxiosInstance;
+    await axios.post(isOperator() ? "/operator/get-accepted-calls" : "/operator/get-accepted-calls-admin", data)
       .then((response) => {
         if (!response.data.error) {
           setList(response.data.body.calls);
@@ -116,7 +117,7 @@ const RinginCallCard = () => {
   }, [perPage]);
 
   const getFields = async () => {
-    let axios=online?AxiosInstance:LocalAxiosInstance;
+    let axios = online ? AxiosInstance : LocalAxiosInstance;
     await axios.get("/operator/get-fields")
       .then((response) => {
         setFileds(response.data.body);
@@ -145,7 +146,7 @@ const RinginCallCard = () => {
 
 
   function handleDownloadExcel() {
-    let keys=Object.keys(list[0]);
+    let keys = Object.keys(list[0]);
     console.log(keys);
     downloadExcel({
       fileName: "react-export-table-to-excel -> downloadExcel method",
@@ -165,23 +166,23 @@ const RinginCallCard = () => {
       {/* header section starts here */}
       <div className="ringingHeader">
         <h3>Kabul edilen jaňlar</h3>
-        <Button startIcon={<IosShare/>} sx={{color:'black'}} variant={'text'}><CSVLink data={list} style={{textDecoration:'none',color:'black'}}
-                                                                                       filename={`Kabul edilen jaňlar ${new Date()}.csv`}>Eksport</CSVLink></Button>
+        <Button startIcon={<IosShare />} sx={{ color: 'black' }} variant={'text'}><CSVLink data={list} style={{ textDecoration: 'none', color: 'black' }}
+          filename={`Kabul edilen jaňlar ${new Date()}.csv`}>Eksport</CSVLink></Button>
       </div>
       {/* header section ends here */}
 
-      <Stack direction="row" alignItems="center" spacing={3} sx={{mb:3}}>
+      <Stack direction="row" alignItems="center" spacing={3} sx={{ mb: 3 }}>
         <RingingCallSort sortBy={sortBy} setSortBy={setSortBy} />
 
         <RingingCallFilter
-            startDate={startDate}
-            endDate={endDate}
-            incoming={incoming}
-            outgoing={outgoing}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
-            setIncoming={setIncoming}
-            setOutgoing={setOutgoing}
+          startDate={startDate}
+          endDate={endDate}
+          incoming={incoming}
+          outgoing={outgoing}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          setIncoming={setIncoming}
+          setOutgoing={setOutgoing}
         />
         <RingingPerPage perPage={perPage} setPerPage={setPerPage} />
       </Stack>
@@ -221,9 +222,9 @@ const RinginCallCard = () => {
                             )}
                             <span>
                               {item.call_direction == "0" ? (
-                                  "Giriş jaň"
+                                "Giriş jaň"
                               ) : (
-                                  "Çykyş jaň"
+                                "Çykyş jaň"
                               )}
                             </span>
                           </Stack>
@@ -237,11 +238,18 @@ const RinginCallCard = () => {
                             />
                           </Stack>
                         </Stack>
-                        <h3>
-                          {item.user_full_name == "--------"
-                            ? "Näbelli müşderi"
-                            : item.user_full_name}
-                        </h3>
+                        <Stack direction={'row'} justifyContent='space-between'>
+                          <h3>
+                            {item.user_full_name == "--------"
+                              ? "Näbelli müşderi"
+                              : item.user_full_name}
+                          </h3>
+                          <h3>
+                            {
+                              isOperator() ? `` : `${item.operator_fullname} / ${item.sell_point_name}`
+                            }
+                          </h3>
+                        </Stack>
                       </div>
                       <div className="callDate">
                         <Stack direction="row" spacing={12} mb={3}>
@@ -282,9 +290,8 @@ const RinginCallCard = () => {
                                       <span>{call_item.call_time}</span>
                                       <span>{`${parseInt(
                                         call_item.call_duration / 60
-                                      )} min, ${
-                                        call_item.call_duration % 60
-                                      } sek`}</span>
+                                      )} min, ${call_item.call_duration % 60
+                                        } sek`}</span>
                                     </Stack>
                                     <hr />
                                   </>
@@ -292,11 +299,11 @@ const RinginCallCard = () => {
                               })}
 
                             <CallInfoModal
-                                getData={getData}
-                                fields={fields}
-                                wich={"show-all"}
-                                item={item}
-                                key={`customer_update_ringing_$`}
+                              getData={getData}
+                              fields={fields}
+                              wich={"show-all"}
+                              item={item}
+                              key={`customer_update_ringing_$`}
                             />
                           </AccordionDetails>
                         </Accordion>

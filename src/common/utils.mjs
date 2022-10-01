@@ -91,3 +91,6 @@ export const loginChecker=()=>{
         window.location.href='/login';
     }
 }
+
+
+export const isOperator=()=>localStorage.getItem('user_type')=='operator';

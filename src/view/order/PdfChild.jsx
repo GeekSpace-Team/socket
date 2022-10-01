@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { convertTimeStampToDate } from "../../common/utils.mjs";
-import '../../style/order/pdf.css'
+import "../../style/order/pdf.css";
+import Paper from "@mui/material/Paper";
 import QRCode from "react-qr-code";
+import React, { useEffect, useState } from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableRow from "@mui/material/TableRow";
+import { convertTimeStampToDate } from "../../common/utils.mjs";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
 
 function createData(
@@ -71,7 +71,7 @@ const PdfChild = (props) => {
                             <td colSpan={2}>{convertTimeStampToDate(new Date())}</td>
                             <td colSpan={1}>
                                 <div style={{ background: 'white', padding: '1px' }}>
-                                    <QRCode value={props.item.unique_id} level={'L'} size={'40'} />
+                                    <QRCode value={props.item.unique_id} level={'L'} size={'50'} />
                                 </div>
                             </td>
                         </tr>

@@ -1,5 +1,3 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
 import AcceptCall from "../accept-call/AcceptCall";
 import Courier from "../courier/Courier";
 import Customer from "../customer/Customer";
@@ -7,7 +5,9 @@ import Home from "../homepage/Home";
 import Inbox from "../inbox/Inbox";
 import MissedCall from "../missed-call/MissedCall";
 import Order from "../order/Order";
+import React from "react";
 import RinginCall from "../ringin-call/RinginCall";
+import { useLocation } from "react-router-dom";
 
 const Index = () => {
   const location = useLocation();
